@@ -9,7 +9,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Prague
-      - PASSWORD=Sikula #optional
+      - PASSWORD= #optional
       - HASHED_PASSWORD= #optional
       - SUDO_PASSWORD= #optional
       - SUDO_PASSWORD_HASH= #optional
