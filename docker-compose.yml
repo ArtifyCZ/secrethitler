@@ -1,0 +1,21 @@
+---
+version: "3.8"
+services:
+  code-server:
+    #image: ghcr.io/linuxserver/code-server
+    build: .
+    container_name: secret-hitler
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Prague
+      - PASSWORD=Sikula #optional
+      - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD= #optional
+      - SUDO_PASSWORD_HASH= #optional
+      - PROXY_DOMAIN=code-server.my.domain #optional
+    volumes:
+      - ./config:/config
+    ports:
+      - 8443:8443
+    restart: unless-stopped
