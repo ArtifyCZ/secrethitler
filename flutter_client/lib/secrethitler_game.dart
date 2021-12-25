@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
+import 'client.dart';
+
 class SecretHitlerGamePage extends StatefulWidget {
   const SecretHitlerGamePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -17,14 +19,28 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     decoration: TextDecoration.none,
   );
 
-  int _blueCards = 0;
-  int _redCards = 0;
-  int _failedElections = 0;
+  late GameBoard _board;
+  late Client _client;
+
+  @override
+  void initState(){
+    super.initState();
+
+    // _client = Client('ip:port');
+    // _client.getBoard().then((board) {
+    //   print("got board!");
+    //   _board = board;
+    // });
+    _board = GameBoard(blueCards: 2, redCards: 3, failedElections: 1);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // board
+    int numberOfPlayers = 6;
     Size size = MediaQuery.of(context).size;
+
+
+
     return Container(
       height: size.height,
       width: size.width,
@@ -36,15 +52,25 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
               children: [
                 AspectRatio(
                   aspectRatio: 2 / 1,
-                  child: GameBoard(
-                    blueCards: _blueCards,
-                    redCards: _redCards,
-                    failedElections: _failedElections,
-                  ),
+                  child: _board,
                 ),
                 Expanded(
                   child: Container(
                     color: Colors.black,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: numberOfPlayers,
+                      itemBuilder: (context, index) {
+                        return const SizedBox(
+                          width: 50,
+                          height: 80,
+                          child: Card(
+                            color: Colors.grey,
+                            child: Text('Player'),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 )
               ],
