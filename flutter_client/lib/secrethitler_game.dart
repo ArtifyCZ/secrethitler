@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
@@ -22,69 +24,80 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   late GameBoard _board;
   late Client _client;
 
+  //states
+  bool _voting = true;
+
+  void _onVote(bool yes) {
+    log('Voted ${yes ? "yes" : "no"}');
+  }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     // _client = Client('ip:port');
     // _client.getBoard().then((board) {
     //   print("got board!");
-    //   _board = board;
     // });
-    _board = GameBoard(blueCards: 2, redCards: 3, failedElections: 1);
+    _board = GameBoard(
+      blueCards: 2,
+      redCards: 3,
+      failedElections: 1,
+      voting: _voting,
+      voteCallback: _onVote,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    int numberOfPlayers = 6;
+    int numberOfPlayers = 10;
     Size size = MediaQuery.of(context).size;
-
-
 
     return Container(
       height: size.height,
       width: size.width,
-      color: Colors.grey,
-      child: Row(
+      color: Colors.grey[900],
+      child: Column(
         children: <Widget>[
           Expanded(
-            child: Column(
+            child: Row(
               children: [
                 AspectRatio(
                   aspectRatio: 2 / 1,
                   child: _board,
+                  // chat
                 ),
                 Expanded(
-                  child: Container(
-                    color: Colors.black,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: numberOfPlayers,
-                      itemBuilder: (context, index) {
-                        return const SizedBox(
-                          width: 50,
-                          height: 80,
-                          child: Card(
-                            color: Colors.grey,
-                            child: Text('Player'),
-                          ),
-                        );
-                      },
-                    ),
+                  child: ListView.builder(
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return const Text("Chat", style: chatTextStyle);
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),
-          // chat
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return const Text("Chat", style: chatTextStyle);
-              },
+            child: Container(
+              color: Colors.black,
+              child: ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: numberOfPlayers,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    width: 100,
+                    height: 160,
+                    child: Image.asset(
+                      'assets/images/fixler/role-hitler.jpg',
+                      fit: BoxFit.fitWidth,
+                    ),
+                  );
+                },
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

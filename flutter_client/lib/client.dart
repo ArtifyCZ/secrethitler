@@ -7,12 +7,11 @@ class Client {
 
   Client(this.endpoint);
 
-  Future<GameBoard> getBoard() async {
+  Future<Map<String, dynamic>> getBoard() async {
     var response = await get(Uri.http(endpoint, 'board'));
     if (response.statusCode == 200) {
       try {
-        dynamic json = jsonDecode(response.body);
-        return GameBoard(blueCards: json['blueCards'], redCards: json['redCards'], failedElections: json['failedElections']);
+        return jsonDecode(response.body);
       } catch (e, _){
         return Future.error(e);
       }
