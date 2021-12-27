@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-typedef VoteCallback = Function(bool yes);
+import 'common.dart';
+
+typedef VoteCallback = Function(Vote vote);
 
 class VoteOverlay extends StatelessWidget {
   final VoteCallback onVote;
@@ -21,7 +23,7 @@ class VoteOverlay extends StatelessWidget {
             padding: const EdgeInsets.all(40),
             child: ElevatedButton(
               onPressed: () {
-                onVote(true);
+                onVote(Vote.yes);
               },
               child: Image.asset('assets/images/fixler/vote-yes.jpg'),
             ),
@@ -30,7 +32,7 @@ class VoteOverlay extends StatelessWidget {
             padding: const EdgeInsets.all(40),
             child: ElevatedButton(
               onPressed: () {
-                onVote(false);
+                onVote(Vote.no);
               },
               child: Image.asset('assets/images/fixler/vote-no.jpg'),
             ),

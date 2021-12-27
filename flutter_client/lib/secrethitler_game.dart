@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
+import 'game/common.dart';
 import 'client.dart';
 
 class SecretHitlerGamePage extends StatefulWidget {
@@ -24,27 +25,39 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   late GameBoard _board;
   late Client _client;
 
-  //states
-  bool _voting = true;
+  GameState _gameState = GameState.discardingPolicy;
 
-  void _onVote(bool yes) {
-    log('Voted ${yes ? "yes" : "no"}');
+  void _onVote(Vote vote) {
+    log('Voted ${vote.toString()}');
+    _client.vote(vote).onError((error, stackTrace) {
+      log("Error while voting: ${error.toString()}");
+    });
+  }
+  void _onDiscardPolicy(int index) {
+    log('Discarded $index');
+    _client.discardPolicy(index).onError((error, stackTrace) {
+      log("Error while discarding policy: ${error.toString()}");
+    });
   }
 
   @override
   void initState() {
     super.initState();
 
-    // _client = Client('ip:port');
-    // _client.getBoard().then((board) {
-    //   print("got board!");
-    // });
+    _client = Client('localhost:5001');
+    _client.getBoard().then((json) {
+      log("got board!");
+    },onError: (e) {
+      log("Error while getting board: ${e.toString()}");
+    });
     _board = GameBoard(
       blueCards: 2,
       redCards: 3,
       failedElections: 1,
-      voting: _voting,
+      gameState: _gameState,
       voteCallback: _onVote,
+      policyCallback: _onDiscardPolicy,
+      policies: [Side.liberal, Side.fascist, Side.fascist],
     );
   }
 
