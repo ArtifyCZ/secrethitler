@@ -7,11 +7,16 @@ enum Role {
   liberal,
   fascist,
   hitler,
+
+  unknown,
 }
 
 enum Vote {
   yes,
   no,
+
+  unknown,
+  none, // player hasn't voted yet
 }
 
 enum GameState {

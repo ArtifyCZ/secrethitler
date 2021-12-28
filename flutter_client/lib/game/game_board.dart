@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/common.dart';
+import 'package:secrethitler/game/theme.dart';
 
 import 'vote_overlay.dart';
 import 'policy_overlay.dart';
@@ -66,7 +67,7 @@ class GameBoard extends StatelessWidget {
               itemCount: blueCards,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) => Image.asset(
-                  'assets/images/fixler/policy-liberal.jpg',
+                  GameTheme.fixler.policy(Side.liberal),
                   fit: BoxFit.cover),
               separatorBuilder: (context, index) => const SizedBox(width: 20),
             ),
@@ -80,7 +81,7 @@ class GameBoard extends StatelessWidget {
               itemCount: redCards,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) => Image.asset(
-                'assets/images/fixler/policy-fascist.jpg',
+                GameTheme.fixler.policy(Side.fascist),
                 fit: BoxFit.cover,
               ),
               separatorBuilder: (context, index) => const SizedBox(width: 20),

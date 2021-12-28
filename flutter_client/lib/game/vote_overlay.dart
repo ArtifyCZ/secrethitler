@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:secrethitler/game/theme.dart';
 
 import 'common.dart';
 
@@ -25,7 +26,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.yes);
               },
-              child: Image.asset('assets/images/fixler/vote-yes.jpg'),
+              child: Image.asset(GameTheme.fixler.vote(Vote.yes)),
             ),
           ),
           Padding(
@@ -34,7 +35,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.no);
               },
-              child: Image.asset('assets/images/fixler/vote-no.jpg'),
+              child: Image.asset(GameTheme.fixler.vote(Vote.no)),
             ),
           ),
         ],

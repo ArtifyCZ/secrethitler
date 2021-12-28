@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
 import 'game/common.dart';
+import 'game/theme.dart';
 import 'client.dart';
 
 class SecretHitlerGamePage extends StatefulWidget {
@@ -25,7 +26,26 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   late GameBoard _board;
   late Client _client;
 
-  GameState _gameState = GameState.discardingPolicy;
+  int numberOfPlayers = 6;
+
+  GameState _gameState = GameState.voting;
+
+  List<Vote> votes = [
+    Vote.none,
+    Vote.unknown,
+    Vote.none,
+    Vote.unknown,
+    Vote.unknown,
+    Vote.unknown
+  ];
+  List<Role> roles = [
+    Role.liberal,
+    Role.fascist,
+    Role.hitler,
+    Role.liberal,
+    Role.fascist,
+    Role.liberal
+  ];
 
   void _onVote(Vote vote) {
     log('Voted ${vote.toString()}');
@@ -33,6 +53,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
       log("Error while voting: ${error.toString()}");
     });
   }
+
   void _onDiscardPolicy(int index) {
     log('Discarded $index');
     _client.discardPolicy(index).onError((error, stackTrace) {
@@ -47,7 +68,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     _client = Client('localhost:5001');
     _client.getBoard().then((json) {
       log("got board!");
-    },onError: (e) {
+    }, onError: (e) {
       log("Error while getting board: ${e.toString()}");
     });
     _board = GameBoard(
@@ -63,7 +84,6 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    int numberOfPlayers = 10;
     Size size = MediaQuery.of(context).size;
 
     return Container(
@@ -99,19 +119,23 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
                 scrollDirection: Axis.horizontal,
                 itemCount: numberOfPlayers,
                 itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: 100,
-                    height: 160,
-                    child: Image.asset(
-                      'assets/images/fixler/role-hitler.jpg',
-                      fit: BoxFit.fitWidth,
-                    ),
-                  );
+                  return playerCard(context, index);
                 },
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget playerCard(BuildContext context, int index) {
+    return SizedBox(
+      width: 100,
+      height: 160,
+      child: Image.asset(
+        GameTheme.fixler.role(roles[index]),
+        fit: BoxFit.fitWidth,
       ),
     );
   }

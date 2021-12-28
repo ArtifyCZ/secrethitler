@@ -8,15 +8,16 @@ void main() {
 }
 
 class SecretHitlerApp extends StatelessWidget {
+  static const String title = 'Secret Hitler';
   const SecretHitlerApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: title,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SecretHitlerGamePage(title: 'Secret Hitler'),
+      home: const SecretHitlerGamePage(title: title),
     );
   }
 }
