@@ -43,8 +43,8 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Role.fascist,
     Role.hitler,
     Role.liberal,
+    Role.liberal,
     Role.fascist,
-    Role.liberal
   ];
 
   void _onVote(Vote vote) {
@@ -144,15 +144,15 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
               child: Container(
                 color: Colors.black,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(
                     numberOfPlayers,
                     (index) {
-                      if (votes[index] != Vote.none) {
-                        return playerCardWithVote(context, index, votes[index]);
-                      } else {
-                        return playerCard(context, index);
-                      }
+                      return AspectRatio(
+                        aspectRatio: 600 / 2000,
+                        child: playerCard(context, index),
+                      );
                     },
                   ),
                 ),
@@ -165,29 +165,25 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   }
 
   Widget playerCard(BuildContext context, int index) {
-    return SizedBox(
-      width: 100,
-      height: 160,
-      child: Image.asset(
-        GameTheme.fixler.role(roles[index]),
-        fit: BoxFit.fitWidth,
-      ),
+    return Column(
+      children: <Widget>[
+        Image.asset(
+          GameTheme.fixler.role(roles[index]),
+          fit: BoxFit.scaleDown,
+        ),
+        playerVote(context, index),
+      ],
     );
   }
 
-  Widget playerCardWithVote(BuildContext context, int index, Vote vote) {
-    return Column(
-      children: <Widget>[
-        playerCard(context, index),
-        SizedBox(
-          width: 100,
-          height: 160,
-          child: Image.asset(
-            GameTheme.fixler.vote(vote),
-            fit: BoxFit.fitWidth,
-          ),
-        )
-      ],
-    );
+  Widget playerVote(BuildContext context, int index) {
+    if (votes[index] != Vote.none) {
+      return Image.asset(
+        GameTheme.fixler.vote(votes[index]),
+        fit: BoxFit.scaleDown,
+      );
+    } else {
+      return Container();
+    }
   }
 }
