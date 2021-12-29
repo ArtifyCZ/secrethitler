@@ -66,10 +66,13 @@ class GameBoard extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: blueCards,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => Image.asset(
-                  GameTheme.fixler.policy(Side.liberal),
-                  fit: BoxFit.cover),
-              separatorBuilder: (context, index) => const SizedBox(width: 20),
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                child: Image.asset(
+                    GameTheme.fixler.policy(Side.liberal),
+                    fit: BoxFit.cover),
+              ),
+              separatorBuilder: (context, index) => const SizedBox(width: 10),
             ),
           ),
         ),
@@ -80,11 +83,14 @@ class GameBoard extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: redCards,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => Image.asset(
-                GameTheme.fixler.policy(Side.fascist),
-                fit: BoxFit.cover,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                child: Image.asset(
+                  GameTheme.fixler.policy(Side.fascist),
+                  fit: BoxFit.cover,
+                ),
               ),
-              separatorBuilder: (context, index) => const SizedBox(width: 20),
+              separatorBuilder: (context, index) => const SizedBox(width: 10),
             ),
           ),
         )

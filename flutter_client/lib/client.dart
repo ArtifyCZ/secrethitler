@@ -46,6 +46,7 @@ class Client {
       return Future.error('Cannot POST /vote -> ${response.statusCode}');
     }
   }
+
   Future discardPolicy(int index) async {
     final data = {
       'discardPolicy': index,
@@ -59,6 +60,35 @@ class Client {
       return Future.error('Cannot POST /discardpolicy -> ${response.statusCode}');
     }
   }
+
+  Future chooseChancellor(int index) async {
+    final data = {
+      'chancellor': index,
+    };
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    var response = await post(Uri.http(endpoint, 'chooseChancellor'),
+        headers: headers, body: json.encode(data));
+    if (response.statusCode != 200) {
+      return Future.error('Cannot POST /chooseChancellor -> ${response.statusCode}');
+    }
+  }
+
+  Future specialAction(int index) async {
+    final data = {
+      'specialAction': index,
+    };
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    var response = await post(Uri.http(endpoint, 'specialAction'),
+        headers: headers, body: json.encode(data));
+    if (response.statusCode != 200) {
+      return Future.error('Cannot POST /specialAction -> ${response.statusCode}');
+    }
+  }
+
   Future sendChatMsg(String msg) async {
     final data = {
       'msg': msg,

@@ -28,8 +28,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   int numberOfPlayers = 6;
 
-  GameState _gameState = GameState.voting;
-
+  GameState _gameState = GameState.waiting;
   List<Vote> votes = [
     Vote.none,
     Vote.unknown,
@@ -46,6 +45,8 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Role.liberal,
     Role.fascist,
   ];
+  int _lastChancellor = 0;
+  int _lastPresident = 0;
 
   void _onVote(Vote vote) {
     log('Voted ${vote.toString()}');
@@ -59,6 +60,16 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     _client.discardPolicy(index).onError((error, stackTrace) {
       log("Error while discarding policy: ${error.toString()}");
     });
+  }
+
+  void _chooseChancellor(int index) {
+    log('Choosing chancellor: #$index');
+    _client.chooseChancellor(index);
+  }
+
+  void _specialAction(int index) {
+    log('Performing special action: #$index');
+    _client.specialAction(index);
   }
 
   void _sendChatMsg(String msg) {
@@ -165,23 +176,59 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   }
 
   Widget playerCard(BuildContext context, int index) {
-    return Column(
-      children: <Widget>[
-        Image.asset(
-          GameTheme.fixler.role(roles[index]),
-          fit: BoxFit.scaleDown,
-        ),
-        playerVote(context, index),
-      ],
-    );
+    if (_gameState == GameState.choosingChancellor) {
+      return Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => _chooseChancellor(index),
+            child: Image.asset(
+              GameTheme.fixler.role(roles[index]),
+              fit: BoxFit.scaleDown,
+            ),
+          ),
+          Container(),
+        ],
+      );
+    } else if (_gameState == GameState.specialAction) {
+      return Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => _specialAction(index),
+            child: Image.asset(
+              GameTheme.fixler.role(roles[index]),
+              fit: BoxFit.scaleDown,
+            ),
+          ),
+          Container(),
+        ],
+      );
+    } else if (_gameState == GameState.voting) {
+      return Column(
+        children: <Widget>[
+          Image.asset(
+            GameTheme.fixler.role(roles[index]),
+            fit: BoxFit.scaleDown,
+          ),
+          playerVote(context, index),
+        ],
+      );
+    } else {
+      return Column(
+        children: <Widget>[
+          Image.asset(
+            GameTheme.fixler.role(roles[index]),
+            fit: BoxFit.scaleDown,
+          ),
+          Container(),
+        ],
+      );
+    }
   }
 
   Widget playerVote(BuildContext context, int index) {
     if (votes[index] != Vote.none) {
-      return Image.asset(
-        GameTheme.fixler.vote(votes[index]),
-        fit: BoxFit.scaleDown,
-      );
+      return Image.asset(GameTheme.fixler.vote(votes[index]),
+          fit: BoxFit.scaleDown);
     } else {
       return Container();
     }
