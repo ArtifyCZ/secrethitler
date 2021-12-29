@@ -35,8 +35,8 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Vote.unknown,
     Vote.none,
     Vote.unknown,
-    Vote.unknown,
-    Vote.unknown
+    Vote.yes,
+    Vote.no
   ];
   List<Role> roles = [
     Role.liberal,
@@ -59,6 +59,11 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     _client.discardPolicy(index).onError((error, stackTrace) {
       log("Error while discarding policy: ${error.toString()}");
     });
+  }
+
+  void _sendChatMsg(String msg) {
+    log('Sending chat message: "$msg"');
+    _client.sendChatMsg(msg);
   }
 
   @override
@@ -86,45 +91,75 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Container(
-      height: size.height,
-      width: size.width,
-      color: Colors.grey[900],
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Row(
-              children: [
-                AspectRatio(
-                  aspectRatio: 2 / 1,
-                  child: _board,
-                  // chat
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return const Text("Chat", style: chatTextStyle);
+    return Material(
+      child: Container(
+        height: size.height,
+        width: size.width,
+        color: Colors.grey[900],
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Row(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 2 / 1,
+                    child: _board,
+                    // chat
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (context, index) {
+                              return const Text("Chat", style: chatTextStyle);
+                            },
+                          ),
+                        ),
+                        TextField(
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            hintText: 'Type something',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          onSubmitted: _sendChatMsg,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.black,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(
+                    numberOfPlayers,
+                    (index) {
+                      if (votes[index] != Vote.none) {
+                        return playerCardWithVote(context, index, votes[index]);
+                      } else {
+                        return playerCard(context, index);
+                      }
                     },
                   ),
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.black,
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: numberOfPlayers,
-                itemBuilder: (context, index) {
-                  return playerCard(context, index);
-                },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -137,6 +172,22 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
         GameTheme.fixler.role(roles[index]),
         fit: BoxFit.fitWidth,
       ),
+    );
+  }
+
+  Widget playerCardWithVote(BuildContext context, int index, Vote vote) {
+    return Column(
+      children: <Widget>[
+        playerCard(context, index),
+        SizedBox(
+          width: 100,
+          height: 160,
+          child: Image.asset(
+            GameTheme.fixler.vote(vote),
+            fit: BoxFit.fitWidth,
+          ),
+        )
+      ],
     );
   }
 }

@@ -17,7 +17,7 @@ class Client {
       (data) {
         log(data);
       },
-      onError: (error) => log(error),
+      onError: (error) => log(error.toString()),
     );
   }
 
@@ -57,6 +57,19 @@ class Client {
         headers: headers, body: json.encode(data));
     if (response.statusCode != 200) {
       return Future.error('Cannot POST /discardpolicy -> ${response.statusCode}');
+    }
+  }
+  Future sendChatMsg(String msg) async {
+    final data = {
+      'msg': msg,
+    };
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    var response = await post(Uri.http(endpoint, 'chat'),
+        headers: headers, body: json.encode(data));
+    if (response.statusCode != 200) {
+      return Future.error('Cannot POST /chat -> ${response.statusCode}');
     }
   }
 }

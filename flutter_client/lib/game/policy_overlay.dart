@@ -17,7 +17,7 @@ class PolicyOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withAlpha(80),
+      color: Colors.black.withAlpha(90),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(policies.length, (index) => policyCard(context, index)),
