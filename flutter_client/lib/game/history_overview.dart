@@ -15,17 +15,37 @@ class HistoryOverview extends StatelessWidget {
     return ListView.separated(
       itemCount: history.length,
       itemBuilder: (context, index) {
-        return Card(
-          color: Colors.grey,
-          child: Column(
-            children: [
-              Text('${GameTheme.currentTheme.president}: ${history[index].president}'),
-              Text('${GameTheme.currentTheme.chancellor}: ${history[index].chancellor}'),
-              Text('Votes: ${history[index].votes}'),
-              Text(history[index].elected ? 'Vote passed' : 'Vote failed'),
-            ],
-          ),
-        );
+        if (history[index].votePassed) {
+          return Card(
+            color: Colors.grey,
+            child: Column(
+              children: [
+                Text('${GameTheme.currentTheme.presidentName}: ${history[index]
+                    .president}'),
+                Text('${GameTheme.currentTheme.chancellorName}: ${history[index]
+                    .chancellor}'),
+                Text('Votes: ${history[index].votes}'),
+                Text('Vote passed'),
+                Text('President: ${history[index].presidentPolicies}'),
+                Text('Chancellor: ${history[index].presidentPolicies}'),
+              ],
+            ),
+          );
+        } else {
+          return Card(
+            color: Colors.grey,
+            child: Column(
+              children: [
+                Text('${GameTheme.currentTheme.presidentName}: ${history[index]
+                    .president}'),
+                Text('${GameTheme.currentTheme.chancellorName}: ${history[index]
+                    .chancellor}'),
+                Text('Votes: ${history[index].votes}'),
+                Text('Vote failed'),
+              ],
+            ),
+          );
+        }
       },
       separatorBuilder: (context, index) => const SizedBox(height: 10),
     );

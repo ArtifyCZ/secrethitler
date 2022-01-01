@@ -32,7 +32,7 @@ class GameRound {
   int president;
   int chancellor;
   List<Vote> votes;
-  bool elected;
+  bool votePassed;
   List<Side>? presidentPolicies; // len 3
   List<Side>? chancellorPolicies; // len 2
   Side? policy;
@@ -42,7 +42,7 @@ class GameRound {
     required this.president,
     required this.chancellor,
     required this.votes,
-    required this.elected,
+    required this.votePassed,
     this.presidentPolicies,
     this.chancellorPolicies,
     this.policy,

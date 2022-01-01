@@ -30,7 +30,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   int numberOfPlayers = 6;
 
-  GameState _gameState = GameState.choosingChancellor;
+  GameState _gameState = GameState.waiting;
   List<Vote> votes = [
     Vote.none,
     Vote.unknown,
@@ -47,13 +47,13 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Role.liberal,
     Role.fascist,
   ];
-  int _chancellor = 0;
-  int _president = 0;
-  int _lastChancellor = 0;
-  int _lastPresident = 0;
+  int _president = 2;
+  int _chancellor = 4;
+  int _lastPresident = 1;
+  int _lastChancellor = 5;
   List<GameRound> history = [
-    GameRound(president: 1, chancellor: 5, votes: [Vote.yes], elected: false),
-    GameRound(president: 2, chancellor: 4, votes: [Vote.no], elected: true),
+    GameRound(president: 1, chancellor: 5, votes: [Vote.yes], votePassed: false),
+    GameRound(president: 2, chancellor: 4, votes: [Vote.no], votePassed: true, presidentPolicies: [Side.liberal, Side.fascist, Side.fascist], chancellorPolicies: [Side.liberal, Side.fascist], policy: Side.liberal),
   ];
 
   void _onVote(Vote vote) {
@@ -236,6 +236,10 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     } else {
       return Column(
         children: <Widget>[
+          index == _president ? Image.asset(GameTheme.currentTheme.president) : Container(),
+          index == _chancellor ? Image.asset(GameTheme.currentTheme.chancellor) : Container(),
+          index == _lastPresident ? Image.asset(GameTheme.currentTheme.lastPresident) : Container(),
+          index == _lastChancellor ? Image.asset(GameTheme.currentTheme.lastChancellor) : Container(),
           Image.asset(GameTheme.currentTheme.role(roles[index])),
           Container(),
         ],

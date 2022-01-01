@@ -3,14 +3,18 @@ import 'common.dart';
 
 abstract class GameTheme {
   // Texts:
-  abstract String president;
-  abstract String chancellor;
-  abstract String liberal;
-  abstract String fascist;
+  abstract String presidentName;
+  abstract String chancellorName;
+  abstract String liberalName;
+  abstract String fascistName;
 
   // Images:
   abstract String liberalBoard;
   abstract String fascistBoard;
+  abstract String president;
+  abstract String chancellor;
+  abstract String lastPresident;
+  abstract String lastChancellor;
   String vote(Vote v);
   String role(Role r);
   String side(Side s);
@@ -22,14 +26,26 @@ abstract class GameTheme {
 
 
 class FixlerTheme extends GameTheme {
-  final directory = 'assets/images/fixler';
-
+  static const directory = 'assets/images/fixler';
 
   @override
   String fascistBoard = 'TODO';
 
   @override
   String liberalBoard = 'TODO';
+
+  @override
+  String president = '$directory/kapitan.jpg';
+
+  @override
+  String chancellor = '$directory/spravce.jpg';
+
+  @override
+  String lastPresident = '$directory/minuly-kapitan.jpg';
+
+  @override
+  String lastChancellor = '$directory/minuly-spravce.jpg';
+
 
   @override
   String policy(Side s) {
@@ -75,15 +91,14 @@ class FixlerTheme extends GameTheme {
   }
 
   @override
-  String president = 'kapitán';
+  String presidentName = 'kapitán';
 
   @override
-  String chancellor = 'správce';
+  String chancellorName = 'správce';
 
   @override
-  String liberal = 'posádka';
+  String liberalName = 'posádka';
 
   @override
-  String fascist = 'hacker';
-
+  String fascistName = 'hacker';
 }
