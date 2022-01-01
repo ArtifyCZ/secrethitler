@@ -1,5 +1,13 @@
-use actix_web::{App, get, HttpResponse, HttpServer, Responder};
-use std::env;
+use {
+    actix_web::{
+        App,
+        get,
+        HttpResponse,
+        HttpServer,
+        Responder
+    },
+    std::env
+};
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -18,7 +26,7 @@ async fn main() -> std::io::Result<()> {
 
     //  1st argument is the binary command
     if (args.len() - 1) == 2 {
-        address = (&args[1]).into_string();
+        address = (&args[1]).clone();
         port = (&args[2]).parse().unwrap();
     } else if (args.len() - 1) == 1 {
         port = (&args[1]).parse().unwrap();
@@ -30,7 +38,7 @@ async fn main() -> std::io::Result<()> {
     println!("Running on port {} on host {}.", port, address);
     println!("http://{}:{}/", address, port);
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
             .service(hello)
     })
