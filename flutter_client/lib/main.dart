@@ -21,9 +21,9 @@ class SecretHitlerApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => SecretHitlerHomePage(title: title),
-        '/game/': (context) => SecretHitlerGamePage(title: title),
+        '/slot/': (context) => SecretHitlerGamePage(title: title),
       },
-      initialRoute: '/game/',
+      initialRoute: '/',
     );
   }
 }

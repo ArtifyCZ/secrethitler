@@ -1,47 +1,45 @@
 import 'package:flutter/material.dart';
 
-class SecretHitlerHomePage extends StatefulWidget {
-  const SecretHitlerHomePage({Key? key, required this.title}) : super(key: key);
+class SecretHitlerHomePage extends StatelessWidget {
   final String title;
+  const SecretHitlerHomePage({Key? key, required this.title}) : super(key: key);
 
-  @override
-  State<SecretHitlerHomePage> createState() => _SecretHitlerHomePageState();
-}
-
-class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  void _joinGame(BuildContext context, String gameId) {
+    Navigator.of(context).pushNamed("/slot/");
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+    Size size = MediaQuery.of(context).size;
+    return Material(
+      child: Container(
+        height: size.height,
+        width: size.width,
+        color: Colors.grey[900],
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Game ID',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+                onSubmitted: (gameId) => _joinGame(context,gameId),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
