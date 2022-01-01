@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'common.dart';
+import 'theme.dart';
 
 typedef PolicyCallback = Function(int index);
 
@@ -28,11 +29,11 @@ class PolicyOverlay extends StatelessWidget {
   Widget policyCard (BuildContext context, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
-      child: ElevatedButton(
+      child: TextButton(
         onPressed: () {
           onSelectPolicy(index);
         },
-        child: policies[index] == Side.liberal ? Image.asset('assets/images/fixler/policy-liberal.jpg') : Image.asset('assets/images/fixler/policy-fascist.jpg'),
+        child: Image.asset(GameTheme.currentTheme.policy(policies[index])),
       ),
     );
   }

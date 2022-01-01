@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
 import 'game/common.dart';
+import 'game/history_overview.dart';
 import 'game/theme.dart';
 import 'client.dart';
 
@@ -25,10 +26,11 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   late GameBoard _board;
   late Client _client;
+  late List<int> _susLevels;
 
   int numberOfPlayers = 6;
 
-  GameState _gameState = GameState.waiting;
+  GameState _gameState = GameState.choosingChancellor;
   List<Vote> votes = [
     Vote.none,
     Vote.unknown,
@@ -45,8 +47,14 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Role.liberal,
     Role.fascist,
   ];
+  int _chancellor = 0;
+  int _president = 0;
   int _lastChancellor = 0;
   int _lastPresident = 0;
+  List<GameRound> history = [
+    GameRound(president: 1, chancellor: 5, votes: [Vote.yes], elected: false),
+    GameRound(president: 2, chancellor: 4, votes: [Vote.no], elected: true),
+  ];
 
   void _onVote(Vote vote) {
     log('Voted ${vote.toString()}');
@@ -77,6 +85,12 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     _client.sendChatMsg(msg);
   }
 
+  void _changeSusLevel(int index, int amount) {
+    setState(() {
+      _susLevels[index] += amount;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +110,8 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
       policyCallback: _onDiscardPolicy,
       policies: [Side.liberal, Side.fascist, Side.fascist],
     );
+
+    _susLevels = List.filled(numberOfPlayers, 0);
   }
 
   @override
@@ -107,67 +123,81 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
         height: size.height,
         width: size.width,
         color: Colors.grey[900],
-        child: Column(
-          children: <Widget>[
+        child: Row(
+          children: [
             Expanded(
-              child: Row(
+              flex: 4,
+              child: Column(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 2 / 1,
-                    child: _board,
-                    // chat
-                  ),
                   Expanded(
-                    child: Column(
+                    child: Row(
                       children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: 10,
-                            itemBuilder: (context, index) {
-                              return const Text("Chat", style: chatTextStyle);
-                            },
-                          ),
+                        AspectRatio(
+                          aspectRatio: 2 / 1,
+                          child: _board,
                         ),
-                        TextField(
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            hintText: 'Type something',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: 10,
+                                  itemBuilder: (context, index) {
+                                    return const Text("Chat",
+                                        style: chatTextStyle);
+                                  },
+                                ),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
+                              TextField(
+                                style: const TextStyle(color: Colors.white),
+                                decoration: const InputDecoration(
+                                  hintText: 'Type something',
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                                onSubmitted: _sendChatMsg,
                               ),
-                            ),
+                            ],
                           ),
-                          onSubmitted: _sendChatMsg,
                         ),
                       ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.black,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          numberOfPlayers,
+                          (index) {
+                            return Container(
+                              margin: EdgeInsets.all(10),
+                              child: AspectRatio(
+                                aspectRatio: 600 / 2000,
+                                child: playerCard(context, index),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             Expanded(
-              child: Container(
-                color: Colors.black,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(
-                    numberOfPlayers,
-                    (index) {
-                      return AspectRatio(
-                        aspectRatio: 600 / 2000,
-                        child: playerCard(context, index),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              flex: 1,
+              child: HistoryOverview(history: history),
             ),
           ],
         ),
@@ -179,12 +209,9 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     if (_gameState == GameState.choosingChancellor) {
       return Column(
         children: <Widget>[
-          ElevatedButton(
+          TextButton(
             onPressed: () => _chooseChancellor(index),
-            child: Image.asset(
-              GameTheme.fixler.role(roles[index]),
-              fit: BoxFit.scaleDown,
-            ),
+            child: Image.asset(GameTheme.currentTheme.role(roles[index])),
           ),
           Container(),
         ],
@@ -192,12 +219,9 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     } else if (_gameState == GameState.specialAction) {
       return Column(
         children: <Widget>[
-          ElevatedButton(
+          TextButton(
             onPressed: () => _specialAction(index),
-            child: Image.asset(
-              GameTheme.fixler.role(roles[index]),
-              fit: BoxFit.scaleDown,
-            ),
+            child: Image.asset(GameTheme.currentTheme.role(roles[index])),
           ),
           Container(),
         ],
@@ -205,20 +229,14 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     } else if (_gameState == GameState.voting) {
       return Column(
         children: <Widget>[
-          Image.asset(
-            GameTheme.fixler.role(roles[index]),
-            fit: BoxFit.scaleDown,
-          ),
+          Image.asset(GameTheme.currentTheme.role(roles[index])),
           playerVote(context, index),
         ],
       );
     } else {
       return Column(
         children: <Widget>[
-          Image.asset(
-            GameTheme.fixler.role(roles[index]),
-            fit: BoxFit.scaleDown,
-          ),
+          Image.asset(GameTheme.currentTheme.role(roles[index])),
           Container(),
         ],
       );
@@ -227,8 +245,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   Widget playerVote(BuildContext context, int index) {
     if (votes[index] != Vote.none) {
-      return Image.asset(GameTheme.fixler.vote(votes[index]),
-          fit: BoxFit.scaleDown);
+      return Image.asset(GameTheme.currentTheme.vote(votes[index]));
     } else {
       return Container();
     }

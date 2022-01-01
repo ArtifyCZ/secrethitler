@@ -22,20 +22,20 @@ class VoteOverlay extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(40),
-            child: ElevatedButton(
+            child: TextButton(
               onPressed: () {
                 onVote(Vote.yes);
               },
-              child: Image.asset(GameTheme.fixler.vote(Vote.yes)),
+              child: Image.asset(GameTheme.currentTheme.vote(Vote.yes)),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(40),
-            child: ElevatedButton(
+            child: TextButton(
               onPressed: () {
                 onVote(Vote.no);
               },
-              child: Image.asset(GameTheme.fixler.vote(Vote.no)),
+              child: Image.asset(GameTheme.currentTheme.vote(Vote.no)),
             ),
           ),
         ],

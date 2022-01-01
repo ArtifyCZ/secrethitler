@@ -8,8 +8,10 @@ void main() {
 }
 
 class SecretHitlerApp extends StatelessWidget {
-  static const String title = 'Secret Hitler';
+  static const String title = 'Secret Fixler';
+
   const SecretHitlerApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,8 +19,11 @@ class SecretHitlerApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SecretHitlerGamePage(title: title),
+      routes: {
+        '/': (context) => SecretHitlerHomePage(title: title),
+        '/game/': (context) => SecretHitlerGamePage(title: title),
+      },
+      initialRoute: '/game/',
     );
   }
 }
-

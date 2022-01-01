@@ -2,6 +2,13 @@
 import 'common.dart';
 
 abstract class GameTheme {
+  // Texts:
+  abstract String president;
+  abstract String chancellor;
+  abstract String liberal;
+  abstract String fascist;
+
+  // Images:
   abstract String liberalBoard;
   abstract String fascistBoard;
   String vote(Vote v);
@@ -10,11 +17,14 @@ abstract class GameTheme {
   String policy(Side s);
 
   static FixlerTheme fixler = FixlerTheme();
+  static GameTheme currentTheme = fixler;
 }
 
 
 class FixlerTheme extends GameTheme {
   final directory = 'assets/images/fixler';
+
+
   @override
   String fascistBoard = 'TODO';
 
@@ -63,5 +73,17 @@ class FixlerTheme extends GameTheme {
         throw UnimplementedError();
     }
   }
+
+  @override
+  String president = 'kapitán';
+
+  @override
+  String chancellor = 'správce';
+
+  @override
+  String liberal = 'posádka';
+
+  @override
+  String fascist = 'hacker';
 
 }
