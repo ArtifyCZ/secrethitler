@@ -1,6 +1,8 @@
 enum Side {
   liberal,
   fascist,
+
+  hidden,
 }
 
 enum Role {

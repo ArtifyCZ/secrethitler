@@ -68,9 +68,7 @@ class GameBoard extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                child: Image.asset(
-                    GameTheme.fixler.policy(Side.liberal),
-                    fit: BoxFit.cover),
+                child: GameTheme.currentTheme.policy(Side.liberal),
               ),
               separatorBuilder: (context, index) => const SizedBox(width: 10),
             ),
@@ -85,10 +83,7 @@ class GameBoard extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                child: Image.asset(
-                  GameTheme.fixler.policy(Side.fascist),
-                  fit: BoxFit.cover,
-                ),
+                child: GameTheme.currentTheme.policy(Side.fascist),
               ),
               separatorBuilder: (context, index) => const SizedBox(width: 10),
             ),

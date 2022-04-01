@@ -26,7 +26,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.yes);
               },
-              child: Image.asset(GameTheme.currentTheme.vote(Vote.yes)),
+              child: GameTheme.currentTheme.vote(Vote.yes),
             ),
           ),
           Padding(
@@ -35,7 +35,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.no);
               },
-              child: Image.asset(GameTheme.currentTheme.vote(Vote.no)),
+              child: GameTheme.currentTheme.vote(Vote.no),
             ),
           ),
         ],
