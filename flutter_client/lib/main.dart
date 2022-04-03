@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'url/url_strategy.dart';
 
 import 'secrethitler_home.dart';
 import 'secrethitler_game.dart';
 
 void main() {
+  usePathUrlStrategy();
   runApp(const SecretHitlerApp());
 }
 
@@ -23,7 +25,7 @@ class SecretHitlerApp extends StatelessWidget {
         '/': (context) => SecretHitlerHomePage(title: title),
         '/game/': (context) => SecretHitlerGamePage(title: title),
       },
-      initialRoute: '/game/',
+      initialRoute: '/',
     );
   }
 }

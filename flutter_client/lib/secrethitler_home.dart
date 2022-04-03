@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class SecretHitlerHomePage extends StatefulWidget {
   const SecretHitlerHomePage({Key? key, required this.title}) : super(key: key);
@@ -9,39 +10,49 @@ class SecretHitlerHomePage extends StatefulWidget {
 }
 
 class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
-  int _counter = 0;
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final _myController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  void _joinGame(String id) {
+    log('Joining $id');
+    Navigator.pushNamed(context, "/game/", arguments: id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
+    return Material(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'Enter game ID:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            TextField(
+              controller: _myController,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Enter game id',
+              ),
+              onSubmitted: _joinGame,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _joinGame(_myController.text);
+              },
+              child: const Text("Join game"),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _myController.dispose();
+    super.dispose();
   }
 }
