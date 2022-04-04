@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'secrethitler-web-api'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=secrethitler-web-api",
+                    "--package=secrethitler-web-api"
+                ],
+                "filter": {
+                    "name": "secrethitler-web-api",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'secrethitler-web-api'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=secrethitler-web-api",
+                    "--package=secrethitler-web-api"
+                ],
+                "filter": {
+                    "name": "secrethitler-web-api",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
