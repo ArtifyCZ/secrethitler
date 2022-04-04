@@ -9,8 +9,7 @@ import 'game/theme.dart';
 import 'client.dart';
 
 class SecretHitlerGamePage extends StatefulWidget {
-  const SecretHitlerGamePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const SecretHitlerGamePage({Key? key}) : super(key: key);
 
   @override
   State<SecretHitlerGamePage> createState() => _SecretHitlerGamePageState();
@@ -211,7 +210,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
         children: <Widget>[
           TextButton(
             onPressed: () => _chooseChancellor(index),
-            child: Image.asset(GameTheme.currentTheme.role(roles[index])),
+            child: GameTheme.currentTheme.role(roles[index]),
           ),
           Container(),
         ],
@@ -221,7 +220,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
         children: <Widget>[
           TextButton(
             onPressed: () => _specialAction(index),
-            child: Image.asset(GameTheme.currentTheme.role(roles[index])),
+            child: GameTheme.currentTheme.role(roles[index]),
           ),
           Container(),
         ],
@@ -229,18 +228,18 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     } else if (_gameState == GameState.voting) {
       return Column(
         children: <Widget>[
-          Image.asset(GameTheme.currentTheme.role(roles[index])),
+          GameTheme.currentTheme.role(roles[index]),
           playerVote(context, index),
         ],
       );
     } else {
       return Column(
         children: <Widget>[
-          index == _president ? Image.asset(GameTheme.currentTheme.president) : Container(),
-          index == _chancellor ? Image.asset(GameTheme.currentTheme.chancellor) : Container(),
-          index == _lastPresident ? Image.asset(GameTheme.currentTheme.lastPresident) : Container(),
-          index == _lastChancellor ? Image.asset(GameTheme.currentTheme.lastChancellor) : Container(),
-          Image.asset(GameTheme.currentTheme.role(roles[index])),
+          index == _president ? GameTheme.currentTheme.president : Container(),
+          index == _chancellor ? GameTheme.currentTheme.chancellor : Container(),
+          index == _lastPresident ? GameTheme.currentTheme.lastPresident : Container(),
+          index == _lastChancellor ? GameTheme.currentTheme.lastChancellor : Container(),
+          GameTheme.currentTheme.role(roles[index]),
           Container(),
         ],
       );
@@ -249,7 +248,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   Widget playerVote(BuildContext context, int index) {
     if (votes[index] != Vote.none) {
-      return Image.asset(GameTheme.currentTheme.vote(votes[index]));
+      return GameTheme.currentTheme.vote(votes[index]);
     } else {
       return Container();
     }

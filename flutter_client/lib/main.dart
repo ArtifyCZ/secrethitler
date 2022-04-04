@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:secrethitler/game/theme.dart';
 import 'url/url_strategy.dart';
 
 import 'secrethitler_home.dart';
@@ -10,20 +11,19 @@ void main() {
 }
 
 class SecretHitlerApp extends StatelessWidget {
-  static const String title = 'Secret Fixler';
 
   const SecretHitlerApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: title,
+      title: GameTheme.currentTheme.title,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => SecretHitlerHomePage(title: title),
-        '/slot/': (context) => SecretHitlerGamePage(title: title),
+        '/': (context) => SecretHitlerHomePage(title: GameTheme.currentTheme.title),
+        '/slot/': (context) => SecretHitlerGamePage(),
       },
       initialRoute: '/',
     );

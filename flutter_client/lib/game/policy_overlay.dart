@@ -33,7 +33,7 @@ class PolicyOverlay extends StatelessWidget {
         onPressed: () {
           onSelectPolicy(index);
         },
-        child: Image.asset(GameTheme.currentTheme.policy(policies[index])),
+        child: GameTheme.currentTheme.policy(policies[index]),
       ),
     );
   }
