@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 
 class SecretHitlerHomePage extends StatefulWidget {
-  const SecretHitlerHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+  const SecretHitlerHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   State<SecretHitlerHomePage> createState() => _SecretHitlerHomePageState();
@@ -16,26 +16,39 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
 
   void _joinGame(String id) {
     log('Joining $id');
-    Navigator.pushNamed(context, "/game/", arguments: id);
+    Navigator.pushNamed(context, "/slot/", arguments: id);
   }
+
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Material(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Enter game ID:',
-            ),
-            TextField(
-              controller: _myController,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Enter game id',
+      child: Container(
+        height: size.height,
+        width: size.width,
+        color: Colors.grey[900],
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _myController,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Enter game ID',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+                onSubmitted: _joinGame,
               ),
-              onSubmitted: _joinGame,
             ),
             ElevatedButton(
               onPressed: () {

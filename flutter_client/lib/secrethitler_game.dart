@@ -181,7 +181,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
                           numberOfPlayers,
                           (index) {
                             return Container(
-                              margin: EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(10),
                               child: AspectRatio(
                                 aspectRatio: 600 / 2000,
                                 child: playerCard(context, index),
