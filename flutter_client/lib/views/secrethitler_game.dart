@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/game_board.dart';
 
-import 'game/common.dart';
-import 'game/history_overview.dart';
-import 'game/theme.dart';
-import 'client.dart';
+import '../game/common.dart';
+import '../game/history_overview.dart';
+import '../game/theme.dart';
+import '../client/game_client.dart';
 
 class SecretHitlerGamePage extends StatefulWidget {
   const SecretHitlerGamePage({Key? key}) : super(key: key);
@@ -24,7 +24,6 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   );
 
   late GameBoard _board;
-  late Client _client;
   late List<int> _susLevels;
 
   int numberOfPlayers = 6;
@@ -57,31 +56,27 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   void _onVote(Vote vote) {
     log('Voted ${vote.toString()}');
-    _client.vote(vote).onError((error, stackTrace) {
-      log("Error while voting: ${error.toString()}");
-    });
+    GameClient.vote(vote);
   }
 
   void _onDiscardPolicy(int index) {
     log('Discarded $index');
-    _client.discardPolicy(index).onError((error, stackTrace) {
-      log("Error while discarding policy: ${error.toString()}");
-    });
+    GameClient.discardPolicy(index);
   }
 
   void _chooseChancellor(int index) {
     log('Choosing chancellor: #$index');
-    _client.chooseChancellor(index);
+    GameClient.chooseChancellor(index);
   }
 
   void _specialAction(int index) {
     log('Performing special action: #$index');
-    _client.specialAction(index);
+    GameClient.specialAction(index);
   }
 
   void _sendChatMsg(String msg) {
     log('Sending chat message: "$msg"');
-    _client.sendChatMsg(msg);
+    GameClient.sendChatMsg(msg);
   }
 
   void _changeSusLevel(int index, int amount) {
@@ -94,8 +89,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   void initState() {
     super.initState();
 
-    _client = Client('localhost:5001');
-    _client.getBoard().then((json) {
+    GameClient.getBoard().then((json) {
       log("got board!");
     }, onError: (e) {
       log("Error while getting board: ${e.toString()}");

@@ -12,7 +12,7 @@ class SecretHitlerHomePage extends StatefulWidget {
 class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-  final _myController = TextEditingController();
+  final _gameIdController = TextEditingController();
 
   void _joinGame(String id) {
     log('Joining $id');
@@ -32,7 +32,7 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
           children: [
             Expanded(
               child: TextField(
-                controller: _myController,
+                controller: _gameIdController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   hintText: 'Enter game ID',
@@ -52,7 +52,7 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
             ),
             ElevatedButton(
               onPressed: () {
-                _joinGame(_myController.text);
+                _joinGame(_gameIdController.text);
               },
               child: const Text("Join game"),
             ),
@@ -65,7 +65,7 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    _myController.dispose();
+    _gameIdController.dispose();
     super.dispose();
   }
 }
