@@ -20,13 +20,18 @@ class SecretHitlerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: GameTheme.currentTheme.title,
+      title: GameTheme.current.title,
       theme: ThemeData(
+        primarySwatch: Colors.red,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
         primarySwatch: Colors.red,
         brightness: Brightness.dark,
       ),
+      themeMode: ThemeMode.dark,
       routes: {
-        '/': (context) => SecretHitlerHomePage(title: GameTheme.currentTheme.title),
+        '/': (context) => SecretHitlerHomePage(title: GameTheme.current.title),
         '/slot/': (context) => SecretHitlerGamePage(),
         '/login/': (context) => SecretHitlerLoginPage(),
       },

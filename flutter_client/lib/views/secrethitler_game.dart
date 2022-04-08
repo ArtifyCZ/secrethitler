@@ -1,10 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:secrethitler/game/game_board.dart';
+import 'package:secrethitler/widgets/game_board.dart';
 
 import '../game/common.dart';
-import '../game/history_overview.dart';
+import '../widgets/history_overview.dart';
+import '../widgets/chat_widget.dart';
 import '../game/theme.dart';
 import '../client/game_client.dart';
 
@@ -16,19 +17,12 @@ class SecretHitlerGamePage extends StatefulWidget {
 }
 
 class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
-  static const TextStyle chatTextStyle = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.normal,
-    color: Colors.white,
-    decoration: TextDecoration.none,
-  );
-
   late GameBoard _board;
   late List<int> _susLevels;
 
   int numberOfPlayers = 6;
 
-  GameState _gameState = GameState.waiting;
+  GameState gameState = GameState.waiting;
   List<Vote> votes = [
     Vote.none,
     Vote.unknown,
@@ -45,13 +39,21 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Role.liberal,
     Role.fascist,
   ];
-  int _president = 2;
-  int _chancellor = 4;
-  int _lastPresident = 1;
-  int _lastChancellor = 5;
+  int president = 2;
+  int chancellor = 4;
+  int lastPresident = 1;
+  int lastChancellor = 5;
   List<GameRound> history = [
-    GameRound(president: 1, chancellor: 5, votes: [Vote.yes], votePassed: false),
-    GameRound(president: 2, chancellor: 4, votes: [Vote.no], votePassed: true, presidentPolicies: [Side.liberal, Side.fascist, Side.fascist], chancellorPolicies: [Side.liberal, Side.fascist], policy: Side.liberal),
+    GameRound(
+        president: 1, chancellor: 5, votes: [Vote.yes], votePassed: false),
+    GameRound(
+        president: 2,
+        chancellor: 4,
+        votes: [Vote.no],
+        votePassed: true,
+        presidentPolicies: [Side.liberal, Side.fascist, Side.fascist],
+        chancellorPolicies: [Side.liberal, Side.fascist],
+        policy: Side.liberal),
   ];
 
   void _onVote(Vote vote) {
@@ -74,11 +76,6 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     GameClient.specialAction(index);
   }
 
-  void _sendChatMsg(String msg) {
-    log('Sending chat message: "$msg"');
-    GameClient.sendChatMsg(msg);
-  }
-
   void _changeSusLevel(int index, int amount) {
     setState(() {
       _susLevels[index] += amount;
@@ -95,10 +92,11 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
       log("Error while getting board: ${e.toString()}");
     });
     _board = GameBoard(
-      blueCards: 2,
-      redCards: 3,
+      blueCards: 5,
+      redCards: 6,
       failedElections: 1,
-      gameState: _gameState,
+      numberOfPlayers: numberOfPlayers,
+      gameState: gameState,
       voteCallback: _onVote,
       policyCallback: _onDiscardPolicy,
       policies: [Side.liberal, Side.fascist, Side.fascist],
@@ -112,7 +110,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     Size size = MediaQuery.of(context).size;
 
     return Material(
-      child: Container(
+      child: SizedBox(
         height: size.height,
         width: size.width,
         child: Row(
@@ -125,47 +123,18 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
                     child: Row(
                       children: [
                         AspectRatio(
-                          aspectRatio: 2 / 1,
+                          aspectRatio: 1500 / 950,
                           child: _board,
                         ),
                         Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: 10,
-                                  itemBuilder: (context, index) {
-                                    return const Text("Chat",
-                                        style: chatTextStyle);
-                                  },
-                                ),
-                              ),
-                              TextField(
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  hintText: 'Type something',
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                                onSubmitted: _sendChatMsg,
-                              ),
-                            ],
-                          ),
+                          child: Chat(),
                         ),
                       ],
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      color: Colors.black,
+                      color: Colors.black87,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +144,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
                             return Container(
                               margin: const EdgeInsets.all(10),
                               child: AspectRatio(
-                                aspectRatio: 600 / 2000,
+                                aspectRatio: 500 / 2000,
                                 child: playerCard(context, index),
                               ),
                             );
@@ -198,41 +167,47 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   }
 
   Widget playerCard(BuildContext context, int index) {
-    if (_gameState == GameState.choosingChancellor) {
+    if (gameState == GameState.choosingChancellor) {
       return Column(
         children: <Widget>[
           TextButton(
             onPressed: () => _chooseChancellor(index),
-            child: GameTheme.currentTheme.role(roles[index]),
+            child: GameTheme.current.role(roles[index]),
           ),
           Container(),
         ],
       );
-    } else if (_gameState == GameState.specialAction) {
+    } else if (gameState == GameState.specialAction) {
       return Column(
         children: <Widget>[
           TextButton(
             onPressed: () => _specialAction(index),
-            child: GameTheme.currentTheme.role(roles[index]),
+            child: GameTheme.current.role(roles[index]),
           ),
           Container(),
         ],
       );
-    } else if (_gameState == GameState.voting) {
+    } else if (gameState == GameState.voting) {
       return Column(
         children: <Widget>[
-          GameTheme.currentTheme.role(roles[index]),
+          GameTheme.current.role(roles[index]),
           playerVote(context, index),
         ],
       );
     } else {
       return Column(
         children: <Widget>[
-          index == _president ? GameTheme.currentTheme.president : Container(),
-          index == _chancellor ? GameTheme.currentTheme.chancellor : Container(),
-          index == _lastPresident ? GameTheme.currentTheme.lastPresident : Container(),
-          index == _lastChancellor ? GameTheme.currentTheme.lastChancellor : Container(),
-          GameTheme.currentTheme.role(roles[index]),
+          index == president ? GameTheme.current.president : Container(),
+          index == chancellor
+              ? GameTheme.current.chancellor
+              : Container(),
+          index == lastPresident
+              ? GameTheme.current.lastPresident
+              : Container(),
+          index == lastChancellor
+              ? GameTheme.current.lastChancellor
+              : Container(),
+          GameTheme.current.role(roles[index]),
           Container(),
         ],
       );
@@ -241,7 +216,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   Widget playerVote(BuildContext context, int index) {
     if (votes[index] != Vote.none) {
-      return GameTheme.currentTheme.vote(votes[index]);
+      return GameTheme.current.vote(votes[index]);
     } else {
       return Container();
     }

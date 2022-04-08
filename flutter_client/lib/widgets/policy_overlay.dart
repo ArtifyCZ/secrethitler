@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'common.dart';
-import 'theme.dart';
+import '../game/common.dart';
+import '../game/theme.dart';
 
 typedef PolicyCallback = Function(int index);
 
@@ -33,7 +33,7 @@ class PolicyOverlay extends StatelessWidget {
         onPressed: () {
           onSelectPolicy(index);
         },
-        child: GameTheme.currentTheme.policy(policies[index]),
+        child: GameTheme.current.policy(policies[index]),
       ),
     );
   }

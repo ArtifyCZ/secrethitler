@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/theme.dart';
 
-import 'common.dart';
+import '../game/common.dart';
 
 typedef VoteCallback = Function(Vote vote);
 
@@ -26,7 +26,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.yes);
               },
-              child: GameTheme.currentTheme.vote(Vote.yes),
+              child: GameTheme.current.vote(Vote.yes),
             ),
           ),
           Padding(
@@ -35,7 +35,7 @@ class VoteOverlay extends StatelessWidget {
               onPressed: () {
                 onVote(Vote.no);
               },
-              child: GameTheme.currentTheme.vote(Vote.no),
+              child: GameTheme.current.vote(Vote.no),
             ),
           ),
         ],

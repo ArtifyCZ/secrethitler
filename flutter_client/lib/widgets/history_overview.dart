@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:secrethitler/game/theme.dart';
-import 'common.dart';
+import '../game/common.dart';
 
 class HistoryOverview extends StatelessWidget {
   final List<GameRound> history;
@@ -20,9 +20,9 @@ class HistoryOverview extends StatelessWidget {
             color: Colors.grey,
             child: Column(
               children: [
-                Text('${GameTheme.currentTheme.presidentName}: ${history[index]
+                Text('${GameTheme.current.presidentName}: ${history[index]
                     .president}'),
-                Text('${GameTheme.currentTheme.chancellorName}: ${history[index]
+                Text('${GameTheme.current.chancellorName}: ${history[index]
                     .chancellor}'),
                 Text('Votes: ${history[index].votes}'),
                 Text('Vote passed'),
@@ -36,9 +36,9 @@ class HistoryOverview extends StatelessWidget {
             color: Colors.grey,
             child: Column(
               children: [
-                Text('${GameTheme.currentTheme.presidentName}: ${history[index]
+                Text('${GameTheme.current.presidentName}: ${history[index]
                     .president}'),
-                Text('${GameTheme.currentTheme.chancellorName}: ${history[index]
+                Text('${GameTheme.current.chancellorName}: ${history[index]
                     .chancellor}'),
                 Text('Votes: ${history[index].votes}'),
                 Text('Vote failed'),
