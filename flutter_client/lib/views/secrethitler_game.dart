@@ -115,7 +115,6 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
       child: Container(
         height: size.height,
         width: size.width,
-        color: Colors.grey[900],
         child: Row(
           children: [
             Expanded(

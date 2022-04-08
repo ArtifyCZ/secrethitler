@@ -102,14 +102,14 @@ class GameClient {
       'token': _token,
     };
 
-    await _client.postData('auth/anonymous', data).then((value) {
+    await _client.deleteData('auth/anonymous', data).then((value) {
       log('Logged out');
+      _token = "";
+      _playerId = "";
+      _authenticated = false;
     }, onError: (error) {
       log("Log out failed: $error");
     });
 
-    _token = "";
-    _playerId = "";
-    _authenticated = false;
   }
 }

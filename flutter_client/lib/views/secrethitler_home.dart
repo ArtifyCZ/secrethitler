@@ -27,7 +27,6 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
       child: Container(
         height: size.height,
         width: size.width,
-        color: Colors.grey[900],
         child: Row(
           children: [
             Expanded(

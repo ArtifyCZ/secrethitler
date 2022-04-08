@@ -35,7 +35,8 @@ class HttpClient {
     }
   }
 
-  Future<Map<String, dynamic>?> postData(String path, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>?> postData(
+      String path, Map<String, dynamic> data) async {
     final headers = {
       'Content-Type': 'application/json',
     };
@@ -57,20 +58,14 @@ class HttpClient {
     }
   }
 
-  Future<Map<String, dynamic>?> deleteData(String path, Map<String, dynamic> data) async {
+  Future<void> deleteData(String path, Map<String, dynamic> data) async {
     final headers = {
       'Content-Type': 'application/json',
     };
     try {
       var response = await delete(Uri.http(endpoint, path),
           headers: headers, body: json.encode(data));
-      if (response.statusCode == 200) {
-        try {
-          return jsonDecode(response.body);
-        } catch (e, _) {
-          return Future.error('Cannot decode JSON response: ${e.toString()}');
-        }
-      } else {
+      if (response.statusCode != 200) {
         return Future.error(
             'Cannot DELETE /$path -> ${response.statusCode} (${response.reasonPhrase})');
       }
