@@ -64,7 +64,6 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
               Expanded(
                 child: TextField(
                   controller: _usernameController,
-                  style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
                     hintText: 'Enter your username',
                     enabledBorder: OutlineInputBorder(
@@ -74,7 +73,7 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.blue,
+                        color: Colors.red,
                       ),
                     ),
                   ),

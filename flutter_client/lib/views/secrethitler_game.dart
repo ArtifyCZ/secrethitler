@@ -10,13 +10,16 @@ import '../game/theme.dart';
 import '../client/game_client.dart';
 
 class SecretHitlerGamePage extends StatefulWidget {
-  const SecretHitlerGamePage({Key? key}) : super(key: key);
+  final String gameId;
+  const SecretHitlerGamePage({Key? key, required this.gameId}) : super(key: key);
+  // const SecretHitlerGamePage({Key? key}) : super(key: key);
 
   @override
   State<SecretHitlerGamePage> createState() => _SecretHitlerGamePageState();
 }
 
 class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
+  // late String gameId;
   late GameBoard _board;
   late List<int> _susLevels;
 
@@ -86,11 +89,12 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   void initState() {
     super.initState();
 
-    GameClient.getBoard().then((json) {
-      log("got board!");
-    }, onError: (e) {
-      log("Error while getting board: ${e.toString()}");
-    });
+
+    // GameClient.getBoard().then((json) {
+    //   log("got board!");
+    // }, onError: (e) {
+    //   log("Error while getting board: ${e.toString()}");
+    // });
     _board = GameBoard(
       blueCards: 5,
       redCards: 6,
@@ -107,61 +111,57 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
+    print('Game: id=${widget.gameId}');
+    // log('Args: ${ModalRoute.of(context)?.settings.arguments}');
     return Material(
-      child: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 1500 / 950,
-                          child: _board,
-                        ),
-                        Expanded(
-                          child: Chat(),
-                        ),
-                      ],
-                    ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1500 / 950,
+                        child: _board,
+                      ),
+                      Expanded(
+                        child: Chat(),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Container(
-                      color: Colors.black87,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                          numberOfPlayers,
-                          (index) {
-                            return Container(
-                              margin: const EdgeInsets.all(10),
-                              child: AspectRatio(
-                                aspectRatio: 500 / 2000,
-                                child: playerCard(context, index),
-                              ),
-                            );
-                          },
-                        ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.black87,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(
+                        numberOfPlayers,
+                        (index) {
+                          return Container(
+                            margin: const EdgeInsets.all(10),
+                            child: AspectRatio(
+                              aspectRatio: 500 / 2000,
+                              child: playerCard(context, index),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 1,
-              child: HistoryOverview(history: history),
-            ),
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 1,
+            child: HistoryOverview(history: history),
+          ),
+        ],
       ),
     );
   }

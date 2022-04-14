@@ -93,13 +93,6 @@
             </list>
           </value>
         </entry>
-        <entry key="flutter_web_plugins">
-          <value>
-            <list>
-              <option value="/opt/flutter/packages/flutter_web_plugins/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="http">
           <value>
             <list>
@@ -111,13 +104,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/http_parser-4.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="js">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/js-0.6.3/lib" />
             </list>
           </value>
         </entry>
@@ -277,7 +263,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_svg-1.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/http-0.13.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/http_parser-4.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/js-0.6.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/lints-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.11/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/material_color_utilities-0.1.3/lib" />
@@ -300,7 +285,6 @@
       <root url="file:///opt/flutter/bin/cache/pkg/sky_engine/lib" />
       <root url="file:///opt/flutter/packages/flutter/lib" />
       <root url="file:///opt/flutter/packages/flutter_test/lib" />
-      <root url="file:///opt/flutter/packages/flutter_web_plugins/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
