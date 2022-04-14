@@ -89,12 +89,10 @@ class GameClient {
         log("Session check failed: $error");
         return false;
       });
-
     }, onError: (error) {
       log("Login failed: $error");
       return false;
     });
-
   }
 
   static void logout() async {
@@ -110,6 +108,5 @@ class GameClient {
     }, onError: (error) {
       log("Log out failed: $error");
     });
-
   }
 }
