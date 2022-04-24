@@ -1,23 +1,26 @@
-use actix_web::web;
-use redis::{Client, Commands, Connection};
+use actix_web::dev::{ServiceFactory, ServiceRequest, ServiceResponse};
+use actix_web::{Error, Scope, test, web};
+use actix_web::test::init_service;
+use actix_web::web::Data;
 use {
     actix_web::{
         App,
-        get,
-        HttpResponse,
-        HttpServer,
-        Responder
+        HttpServer
     },
     std::env
 };
 use crate::app::auth::auth_service::AuthService;
+use crate::app::slot::slot_service;
+use crate::app::user::user_service::UserService;
 
 mod middleware;
 mod infrastructure;
 mod app;
 mod api;
+mod core;
 
 use crate::middleware::auth_middleware::AuthMiddlewareFactory;
+use crate::slot_service::SlotService;
 
 fn extract_args(args: Vec<String>) -> (String, u16) {
     let address = args.get(1).cloned().unwrap_or("0.0.0.0".to_string());
@@ -27,6 +30,14 @@ fn extract_args(args: Vec<String>) -> (String, u16) {
     (address, port)
 }
 
+fn setup_services() -> (AuthMiddlewareFactory, SlotService, UserService) {
+    let users = UserService::new();
+    let auth = AuthService::new(users.clone());
+    let slot_service = SlotService::new();
+
+    (AuthMiddlewareFactory::new(auth), slot_service, users)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let (address, port) = extract_args(env::args().collect());
@@ -34,13 +45,16 @@ async fn main() -> std::io::Result<()> {
     println!("Running on port {} on host {}.", port, address);
     println!("http://{}:{}/", address, port);
 
-    let auth_middleware = AuthMiddlewareFactory::new(AuthService::new());
+    let (auth_mw, slots_service, users_service)
+        = setup_services();
 
     HttpServer::new(move || {
         App::new()
-            .wrap(auth_middleware.clone())
+            .wrap(auth_mw.clone())
+            .app_data(Data::new(slots_service.clone()))
+            .app_data(Data::new(users_service.clone()))
             .service(api::auth::auth_api_scope(web::scope("/auth")))
-            .service(api::graphql::v1::graphql_api_scope(web::scope("/graphql/v1")))
+            .service(api::graphql::graphql_api_scope(web::scope("/graphql")))
     })
         .bind(format!("{}:{}", address, port))?
         .workers(5)

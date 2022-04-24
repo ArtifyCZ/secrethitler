@@ -1,2 +1,2 @@
 pub mod auth_service;
-mod session;
+pub mod session;

@@ -7,11 +7,11 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
-pub struct LogoutAnonymousReqModel {
+pub struct LogoutReqModel {
     pub token: String,
 }
 
-pub async fn logout_anonymous(auth: AuthService, evt: web::Json<LogoutAnonymousReqModel>) -> HttpResponse {
+pub async fn logout(auth: AuthService, evt: web::Json<LogoutReqModel>) -> HttpResponse {
     let token_str = evt.token.as_str();
 
     if let Ok(token) = Uuid::from_str(token_str) {
