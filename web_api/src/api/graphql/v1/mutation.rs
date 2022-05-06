@@ -12,8 +12,10 @@ impl Mutation {
         match players {
             5..=10 => {
                 if let Ok(slot) = context.slots.create_slot(&context.identity, players as u8) {
-                    if let Ok(slot) = Slot::from_domain(slot) {
-                        return Ok(slot);
+                    if let Ok(()) = slot.add_player(context.identity.user()) {
+                        if let Ok(slot) = Slot::from_domain(slot) {
+                            return Ok(slot);
+                        }
                     }
                 }
 

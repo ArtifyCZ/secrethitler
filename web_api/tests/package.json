@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"test": "jest"
+		"test": "cargo build --release && clear && jest -i"
 	},
 	"dependencies": {
 		"jest": "^27.5.1",

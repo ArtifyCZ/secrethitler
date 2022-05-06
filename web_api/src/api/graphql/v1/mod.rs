@@ -36,9 +36,14 @@ async fn graphql_api_endpoint(
     graphql_handler(&schema, &context, req, payload).await
 }
 
+async fn graphiql_route() -> Result<actix_web::HttpResponse, actix_web::Error> {
+    juniper_actix::graphiql_handler("/graphql/v1", None).await
+}
+
 pub fn graphql_api_scope_v1(scope: Scope) -> Scope {
     scope
         .app_data(Data::new(schema()))
         .route("", get().to(graphql_api_endpoint))
         .route("", post().to(graphql_api_endpoint))
+        .route("graphiql", get().to(graphiql_route))
 }

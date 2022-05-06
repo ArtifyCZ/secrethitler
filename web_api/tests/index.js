@@ -12,12 +12,13 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 const { exec } = require('child_process')
 let server = null
 const before = async () => {
-    server = exec('cargo run')
-    await delay(2000)
+    server = exec('cargo run --release')
+    await delay(1000)
 }
 
-const after = () => {
+const after = async () => {
     server.kill()
+    await delay(300)
 }
 
 const checkUUIDValidity = (uuid) => {
@@ -25,8 +26,8 @@ const checkUUIDValidity = (uuid) => {
     return regexExp.test(uuid)
 }
 
-beforeAll(before, 10000)
-afterAll(after, 1000)
+beforeEach(before, 100000)
+afterEach(after, 1000)
 
 module.exports = {
     request,
