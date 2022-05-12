@@ -23,10 +23,11 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           ElevatedButton(
+            key: const Key('btn_create'),
             onPressed: _createGame,
             child: const Text('Create game'),
           ),
@@ -34,6 +35,7 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
             children: [
               Expanded(
                 child: TextField(
+                  key: const Key('text_game_id'),
                   controller: _gameIdController,
                   decoration: const InputDecoration(
                     hintText: 'Enter game ID',
@@ -52,6 +54,7 @@ class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
                 ),
               ),
               ElevatedButton(
+                key: const Key('btn_join'),
                 onPressed: () {
                   _joinGame(_gameIdController.text);
                 },

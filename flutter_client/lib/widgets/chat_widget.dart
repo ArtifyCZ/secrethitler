@@ -36,7 +36,6 @@ class Chat extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
-                style: const TextStyle(color: Colors.white),
                 controller: _msgController,
                 decoration: const InputDecoration(
                   hintText: 'Type something',

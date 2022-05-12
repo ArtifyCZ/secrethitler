@@ -6,7 +6,7 @@ class GameClient {
   static late final HttpClient _client;
   static String _token = "";
   static String _playerId = "";
-  static bool _authenticated = false;
+  static bool authenticated = false;
 
   static void init(String endpoint) {
     _client = HttpClient(endpoint);
@@ -21,7 +21,7 @@ class GameClient {
       'vote': vote.toString(),
     };
     _client.postData('vote', data).onError((error, stackTrace) {
-      log("Error while voting: ${error.toString()}");
+      log("Error while voting: ${error.toString()}", name: "GameClient");
     });
   }
 
@@ -30,7 +30,7 @@ class GameClient {
       'discardPolicy': index,
     };
     _client.postData('discardPolicy', data).onError((error, stackTrace) {
-      log("Error while discarding policy: ${error.toString()}");
+      log("Error while discarding policy: ${error.toString()}", name: "GameClient");
     });
   }
 
@@ -39,7 +39,7 @@ class GameClient {
       'chancellor': index,
     };
     _client.postData('chooseChancellor', data).onError((error, stackTrace) {
-      log("Cannot choose chancellor: ${error.toString()}");
+      log("Cannot choose chancellor: ${error.toString()}", name: "GameClient");
     });
   }
 
@@ -58,9 +58,8 @@ class GameClient {
   }
 
   // Authentication:
-
   static Future<bool> anonymousLogin(String username) async {
-    if (_authenticated) return false;
+    if (authenticated) return false;
 
     var data = {
       'username': username,
@@ -69,28 +68,28 @@ class GameClient {
     return _client.postData('auth/anonymous', data).then((value) async {
       _token = value!['token'];
       _playerId = value['id'];
-      _authenticated = true;
-      log("Received id '$_playerId' and token '$_token' ");
+      authenticated = true;
+      log("Received id '$_playerId' and token '$_token' ", name: "GameClient");
 
       data = {
         'token': _token,
       };
 
-      return _client.postData('auth/checksession', data).then((value) {
+      return _client.postData('auth/check_session', data).then((value) {
         String id = value!['id'];
         if (id == _playerId) {
-          log("Session check successful");
+          log("Session check successful", name: "GameClient");
           return true;
         } else {
-          log("Session check failed - ids don't match '$_playerId' vs '$id'");
+          log("Session check failed:", error: "ids don't match '$_playerId' vs '$id'", name: "GameClient");
           return false;
         }
       }, onError: (error) {
-        log("Session check failed: $error");
+        log("Session check failed:", error: error, name: "GameClient");
         return false;
       });
     }, onError: (error) {
-      log("Login failed: $error");
+      log("Login failed: ", error: error, name: "GameClient");
       return false;
     });
   }
@@ -101,12 +100,12 @@ class GameClient {
     };
 
     await _client.deleteData('auth/anonymous', data).then((value) {
-      log('Logged out');
+      log('Logged out', name: "GameClient");
       _token = "";
       _playerId = "";
-      _authenticated = false;
+      authenticated = false;
     }, onError: (error) {
-      log("Log out failed: $error");
+      log("Log out failed:", error: error, name: "GameClient");
     });
   }
 }

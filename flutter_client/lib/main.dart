@@ -29,7 +29,7 @@ class SecretHitlerApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.dark,
-      initialRoute: '/',
+      initialRoute: '/login/',
       // routes: {
       //   '/': (context) => SecretHitlerHomePage(),
       //   '/slot/': (context) => SecretHitlerGamePage(),
@@ -49,13 +49,18 @@ class SecretHitlerApp extends StatelessWidget {
         }
 
         switch (path[0]) {
+          case 'login':
+            return MaterialPageRoute(
+              builder: (context) => SecretHitlerLoginPage(),
+              settings: routeSettings,
+            );
           case 'slot':
             return MaterialPageRoute(
               builder: (context) =>
                   SecretHitlerGamePage(gameId: path.length >= 2 ? path[1] : ''),
               settings: routeSettings,
             );
-          case 'login':
+          case 'create':
             return MaterialPageRoute(
               builder: (context) => SecretHitlerLoginPage(),
               settings: routeSettings,

@@ -48,6 +48,7 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
                       return const Text('Login successful');
                     } else {
                       return Container(
+                        key: const Key('error_box'),
                         color: Colors.red,
                         padding: const EdgeInsets.all(5),
                         child: const Text('Error while logging in'),
@@ -63,6 +64,7 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
             children: [
               Expanded(
                 child: TextField(
+                  key: const Key('text_username'),
                   controller: _usernameController,
                   decoration: const InputDecoration(
                     hintText: 'Enter your username',
@@ -81,6 +83,7 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
                 ),
               ),
               ElevatedButton(
+                key: const Key('btn_login'),
                 onPressed: () {
                   _login(context, _usernameController.text);
                 },

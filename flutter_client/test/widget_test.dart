@@ -7,24 +7,40 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:secrethitler/client/game_client.dart';
 
 import 'package:secrethitler/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Login and create a new slot', (WidgetTester tester) async {
+    GameClient.init("127.0.0.1:8000");
     // Build our app and trigger a frame.
     await tester.pumpWidget(const SecretHitlerApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Expect login form
+    var btnLogin = find.byKey(const Key('btn_login'));
+    var textUsername = find.byKey(const Key('text_username'));
+    expect(textUsername, findsOneWidget);
+    expect(btnLogin, findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.enterText(textUsername, 'My Name');
+    await tester.tap(btnLogin);
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(GameClient.authenticated, true);
+
+    expect(find.byKey(const Key('error_box')), findsNothing);
+
+
+    // Expect home page
+    var btnCreate = find.byKey(const Key('btn_create'));
+    var textGameId = find.byKey(const Key('text_game_id'));
+    var btnJoin = find.byKey(const Key('btn_join'));
+    expect(btnCreate, findsOneWidget);
+    expect(textGameId, findsOneWidget);
+    expect(btnJoin, findsOneWidget);
+
+    await tester.tap(btnCreate);
+    await tester.pumpAndSettle();
   });
 }
