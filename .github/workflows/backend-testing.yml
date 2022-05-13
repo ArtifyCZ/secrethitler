@@ -1,0 +1,19 @@
+name: backend testing
+on: [push, pull_request]
+jobs:
+  run_tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the backend
+      run: |
+        cd web_api
+        cargo build --release
+    - name: Run the tests
+      run: |
+        cd tests
+        npm run test
+
