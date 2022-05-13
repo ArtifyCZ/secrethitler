@@ -16,5 +16,6 @@ jobs:
       run: |
         cd web_api
         cd tests
+        export TERM=dumb
         npm run test
 
