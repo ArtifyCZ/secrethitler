@@ -16,6 +16,7 @@ jobs:
       run: |
         cd web_api
         cd tests
-        export TERM=dumb
+        #export TERM=dumb
+        npm i
         npm run coverage
 
