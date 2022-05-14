@@ -17,5 +17,5 @@ jobs:
         cd web_api
         cd tests
         export TERM=dumb
-        npm run test
+        npm run coverage
 
