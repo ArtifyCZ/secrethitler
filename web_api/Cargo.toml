@@ -6,7 +6,8 @@ edition = "2021"
 [dependencies]
 actix-web = "4.0.1"
 futures = "0.3.21"
-uuid = { version = "0.8.2", features = ["v4"] }
+uuid = { version = "1.0.0", features = ["v4"] }
 juniper_actix = "0.4.0"
 juniper = "0.15.9"
 serde = { version = "1.0.136", features = ["derive"] }
+actix-cors = "0.6.1"

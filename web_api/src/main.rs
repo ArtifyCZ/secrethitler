@@ -50,9 +50,12 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(actix_cors::Cors::permissive())
             .wrap(auth_mw.clone())
             .app_data(Data::new(slots_service.clone()))
             .app_data(Data::new(users_service.clone()))
+            .wrap(actix_cors::Cors::permissive())
+            .wrap(auth_middleware.clone())
             .service(api::auth::auth_api_scope(web::scope("/auth")))
             .service(api::graphql::graphql_api_scope(web::scope("/graphql")))
     })
