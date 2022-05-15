@@ -26,8 +26,7 @@ pub async fn login_anonymous(auth: AuthService, evt: web::Json<LoginAnonymousReq
                         token: token.to_string(),
                     })
         }
-        Err(err) => {
-            // TODO: TODO: Implement error handling. This stuff needs implement errors in AuthService first.
+        Err(_) => {
             HttpResponse::Unauthorized()
                 .reason("There is already an user with this username.") // It is not always this error.
                 .finish()

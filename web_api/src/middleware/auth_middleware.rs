@@ -3,20 +3,15 @@ use std::task::{Context, Poll};
 
 use actix_web::{dev::{ServiceRequest, ServiceResponse, Service, Transform}, Error, HttpMessage, body::MessageBody};
 use futures::future::{ok, Ready};
-use futures::Future;
+use futures::{Future, TryStreamExt};
 use crate::app::auth::auth_service::AuthService;
 
+#[derive(Clone)]
 pub struct AuthMiddlewareFactory(AuthService);
 
 impl AuthMiddlewareFactory {
     pub fn new(service: AuthService) -> Self {
         Self(service)
-    }
-}
-
-impl Clone for AuthMiddlewareFactory {
-    fn clone(&self) -> Self {
-        Self::new(self.0.clone())
     }
 }
 
@@ -61,7 +56,7 @@ impl<S, B> Service<ServiceRequest> for AuthMiddleware<S>
     }
 
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
-        println!("Hi from start.");
+        println!("{}: {}", req.method(), req.uri());
 
         //TODO: Implement adding the service to the extensions.
         req.extensions_mut().insert(self.auth_service.clone());
@@ -71,7 +66,6 @@ impl<S, B> Service<ServiceRequest> for AuthMiddleware<S>
         Box::pin(async move {
             let res = fut.await?;
 
-            println!("Hi from response");
             Ok(res)
         })
     }
