@@ -1,4 +1,3 @@
-use actix_web::dev::{ServiceFactory, ServiceRequest, ServiceResponse};
 use actix_web::{Error, Scope, test, web};
 use actix_web::test::init_service;
 use actix_web::web::Data;

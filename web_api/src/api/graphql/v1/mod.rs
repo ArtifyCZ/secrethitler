@@ -8,7 +8,7 @@ use crate::api::graphql::v1::context::GraphQLContext;
 use crate::api::graphql::v1::mutation::Mutation;
 use crate::api::graphql::v1::query::Query;
 use crate::app::slot::slot_service::SlotService;
-use crate::app::user::identity::Identity;
+use crate::app::user::user::User;
 
 mod query;
 mod object;
@@ -30,9 +30,9 @@ async fn graphql_api_endpoint(
     payload: Payload,
     schema: Data<Schema>,
     slots: Data<SlotService>,
-    identity: Identity
+    user: User
 ) -> Result<HttpResponse, Error> {
-    let context = GraphQLContext::new(slots.get_ref().clone(), identity);
+    let context = GraphQLContext::new(slots.get_ref().clone(), user);
     graphql_handler(&schema, &context, req, payload).await
 }
 

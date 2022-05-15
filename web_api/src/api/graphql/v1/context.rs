@@ -1,18 +1,18 @@
 use crate::app::slot::slot_service::SlotService;
-use crate::app::user::identity::Identity;
+use crate::app::user::user::User;
 
 pub struct GraphQLContext {
     pub slots: SlotService,
-    pub identity: Identity
+    pub user: User
 }
 
 impl juniper::Context for GraphQLContext {}
 
 impl GraphQLContext {
-    pub fn new(slots: SlotService, identity: Identity) -> Self {
+    pub fn new(slots: SlotService, user: User) -> Self {
         Self {
             slots,
-            identity
+            user
         }
     }
 }

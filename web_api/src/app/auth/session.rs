@@ -1,6 +1,5 @@
 use std::sync::Arc;
 use uuid::Uuid;
-use crate::app::user::identity::Identity;
 use crate::app::user::user::{User, UserType};
 
 #[derive(Clone)]
@@ -14,8 +13,8 @@ struct SessionInner {
 }
 
 impl Session {
-    pub fn identity(&self) -> Identity {
-        Identity::from_user(self.data.user.clone())
+    pub fn user(&self) -> User {
+        self.data.user.clone()
     }
 
     /// Returns the uuid of the user.

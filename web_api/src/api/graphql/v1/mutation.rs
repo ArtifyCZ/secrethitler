@@ -9,17 +9,14 @@ fn uuid_parse_err() -> FieldError {
     FieldError::new(
         "Invalid uuid.",
         Value::Null
-    )
-}
+    )}
 
 fn slot_not_found_err(uuid: Uuid) -> FieldError {
     FieldError::new(
         "Slot not found.",
         graphql_value!({
-                    "uuid": (uuid.to_string())
-                })
-    )
-}
+            "uuid": (uuid.to_string())
+        }))}
 
 pub struct Mutation;
 #[graphql_object(context = GraphQLContext)]
@@ -29,13 +26,13 @@ impl Mutation {
             FieldError::new(
                 "Failed to create a slot.",
                 Value::Null
-            )
-        };
+            )}
+
         match players {
             5..=10 => {
-                let slot = context.slots.create_slot(&context.identity, players as u8)
+                let slot = context.slots.create_slot(&context.user, players as u8)
                     .map_err(|_| create_slot_err())?;
-                slot.add_player(context.identity.user()).map_err(|_| create_slot_err())?;
+                slot.add_player(context.user.clone()).map_err(|_| create_slot_err())?;
                 let res = Slot::from_domain(slot).map_err(|_| create_slot_err())?;
                 Ok(res)
             },
@@ -55,7 +52,7 @@ impl Mutation {
                 "Failed to start game.",
                 graphql_value!({
                         "uuid": (uuid.to_string())
-                }))};
+                }))}
 
         let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
         let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
@@ -70,11 +67,11 @@ impl Mutation {
                 "Failed to join.",
                 graphql_value!({
                     "uuid": (uuid.to_string())
-                }))};
+                }))}
 
         let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
         let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
-        slot.add_player(context.identity.user()).map_err(|_| failed_to_join(uuid))?;
+        slot.add_player(context.user.clone()).map_err(|_| failed_to_join(uuid))?;
         let res = Slot::from_domain(slot).map_err(|_| failed_to_join(uuid))?;
         Ok(res)
     }

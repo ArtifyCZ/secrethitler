@@ -1,7 +1,6 @@
 use std::sync::{Arc, LockResult, RwLock};
 use uuid::Uuid;
 use crate::app::game::game::Game;
-use crate::app::user::identity::Identity;
 use crate::app::user::user::User;
 
 #[derive(Clone)]
@@ -18,14 +17,14 @@ struct SlotInner {
 }
 
 impl Slot {
-    pub fn new(uuid: Uuid, admin: User, players: u8) -> Result<Self, ()> {
+    pub fn new(uuid: Uuid, admin: &User, players: u8) -> Result<Self, ()> {
         Ok(
             Self {
                 data: Arc::new(
                     RwLock::new(
                         SlotInner {
                             uuid,
-                            admin,
+                            admin: admin.clone(),
                             players: Vec::with_capacity(players as usize),
                             players_count: players,
                             game: None

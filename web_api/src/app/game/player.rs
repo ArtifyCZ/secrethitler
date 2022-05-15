@@ -1,4 +1,3 @@
-use crate::app::user::identity::Identity;
 use crate::app::user::user::User;
 
 #[derive(Copy, Clone)]
@@ -42,8 +41,8 @@ impl Player {
         }
     }
 
-    pub fn identity(&self) -> Identity {
-        Identity::from_user(self.user.clone())
+    pub fn user(&self) -> User {
+        self.user.clone()
     }
 
     pub fn role(&self) -> GameRole {
