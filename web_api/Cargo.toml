@@ -6,8 +6,6 @@ edition = "2021"
 [dependencies]
 actix-web = "4.0.1"
 futures = "0.3.21"
-diesel = { version = "1.4.8", features = [ "postgres" ] }
-redis = "0.21.5"
 uuid = { version = "1.0.0", features = ["v4"] }
 juniper_actix = "0.4.0"
 juniper = "0.15.9"

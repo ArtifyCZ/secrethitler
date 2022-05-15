@@ -20,13 +20,13 @@ pub async fn check_session(auth: AuthService, evt: web::Json<CheckSessionReqMode
 
     if let Ok(token) = Uuid::from_str(token_str) {
         match auth.get_session(token) {
-            Some(session) => {
+            Ok(session) => {
                 HttpResponse::Ok()
                     .json(CheckSessionResModel {
                         id: session.uuid().to_string()
                     })
             },
-            None => HttpResponse::new(StatusCode::UNAUTHORIZED)
+            Err(_) => HttpResponse::new(StatusCode::UNAUTHORIZED) //TODO: IMPLEMENT ERROR HANDLING
         }
     } else {
         HttpResponse::new(StatusCode::BAD_REQUEST)

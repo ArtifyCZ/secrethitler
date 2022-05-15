@@ -1,0 +1,10 @@
+{
+	"scripts": {
+		"test": "jest --ci"
+	},
+	"dependencies": {
+		"jest": "^27.5.1",
+		"supertest": "^6.2.2",
+		"unique-username-generator": "^1.0.1"
+	}
+}
