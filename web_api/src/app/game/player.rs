@@ -3,23 +3,23 @@ use crate::app::user::user::User;
 
 #[derive(Copy, Clone)]
 pub enum GameRole {
-    Liberalist,
-    Fasict,
+    Liberal,
+    Fascist,
     Hitler
 }
 
 #[derive(Copy, Clone)]
 pub enum Party {
-    Liberalist,
-    Facist
+    Liberal,
+    Fascist
 }
 
 impl Party {
     fn from_role(role: GameRole) -> Self {
         match role {
-            GameRole::Liberalist => Self::Liberalist,
-            GameRole::Fasict => Self::Facist,
-            GameRole::Hitler => Self::Facist
+            GameRole::Liberal => Self::Liberal,
+            GameRole::Fascist => Self::Fascist,
+            GameRole::Hitler => Self::Fascist
         }
     }
 }
