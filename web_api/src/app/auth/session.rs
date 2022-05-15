@@ -3,6 +3,7 @@ use uuid::Uuid;
 use crate::app::user::identity::Identity;
 use crate::app::user::user::{User, UserType};
 
+#[derive(Clone)]
 pub struct Session {
     data: Arc<SessionInner>
 }
@@ -40,14 +41,6 @@ impl Session {
                 user,
                 token
             })
-        }
-    }
-}
-
-impl Clone for Session {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone()
         }
     }
 }

@@ -6,17 +6,12 @@ use futures::future::{ok, Ready};
 use futures::{Future, TryStreamExt};
 use crate::app::auth::auth_service::AuthService;
 
+#[derive(Clone)]
 pub struct AuthMiddlewareFactory(AuthService);
 
 impl AuthMiddlewareFactory {
     pub fn new(service: AuthService) -> Self {
         Self(service)
-    }
-}
-
-impl Clone for AuthMiddlewareFactory {
-    fn clone(&self) -> Self {
-        Self::new(self.0.clone())
     }
 }
 

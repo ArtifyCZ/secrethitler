@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::app::slot::slot::Slot;
 use crate::app::user::identity::Identity;
 
+#[derive(Clone)]
 pub struct SlotService {
     data: Arc<RwLock<SlotServiceInner>>
 }
@@ -49,14 +50,6 @@ impl SlotService {
                 Ok(slot)
             },
             Err(_) => Err(())
-        }
-    }
-}
-
-impl Clone for SlotService {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone()
         }
     }
 }

@@ -4,6 +4,7 @@ use crate::app::game::game::Game;
 use crate::app::user::identity::Identity;
 use crate::app::user::user::User;
 
+#[derive(Clone)]
 pub struct Slot {
     data: Arc<RwLock<SlotInner>>
 }
@@ -92,14 +93,6 @@ impl Slot {
                 Ok(())
             },
             Err(_) => Err(())
-        }
-    }
-}
-
-impl Clone for Slot {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone()
         }
     }
 }

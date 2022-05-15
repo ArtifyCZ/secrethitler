@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct User {
     data: Arc<UserInner>
 }
@@ -37,13 +38,5 @@ impl User {
 
     pub fn u_type(&self) -> UserType {
         self.data.u_type.clone()
-    }
-}
-
-impl Clone for User {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone()
-        }
     }
 }

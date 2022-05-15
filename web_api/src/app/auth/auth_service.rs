@@ -8,6 +8,7 @@ use crate::app::auth::session::Session;
 use crate::app::user::user::UserType;
 use crate::app::user::user_service::UserService;
 
+#[derive(Clone)]
 pub struct AuthService {
     data: Arc<RwLock<AuthServiceInner>>,
     users: UserService
@@ -81,15 +82,6 @@ impl AuthService {
                 Ok(session)
             },
             _ => Err(())
-        }
-    }
-}
-
-impl Clone for AuthService {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone(),
-            users: self.users.clone()
         }
     }
 }

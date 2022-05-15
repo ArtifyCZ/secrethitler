@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::app::user::identity::Identity;
 use crate::app::user::user::{User, UserType};
 
+#[derive(Clone)]
 pub struct UserService {
     data: Arc<RwLock<UserServiceInner>>
 }
@@ -62,14 +63,6 @@ impl UserService {
                 Ok(user)
             },
             Err(_) => Err(())
-        }
-    }
-}
-
-impl Clone for UserService {
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data.clone()
         }
     }
 }
