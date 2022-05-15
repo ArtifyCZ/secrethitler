@@ -1,5 +1,7 @@
-name: backend testing
-on: [push, pull_request]
+name: Secret Hitler CI
+on:
+  pull_request:
+    branches: [dev, release]
 jobs:
   run_tests:
     strategy:
@@ -8,15 +10,18 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v2
-    - name: Build the backend
-      run: |
-        cd web_api
-        cargo build --release
-    - name: Run the tests
-      run: |
-        cd web_api
-        cd tests
-        #export TERM=dumb
-        npm i
-        npm run coverage
 
+    - name: Build the backend
+      run: cargo build --release --manifest-path=web_api/Cargo.toml
+
+    - name: Start the API server
+      run: web_api/target/release/secrethitler-web-api&
+
+    - name: Install test dependencies
+      run: npm i --prefix web_api/tests web_api/tests
+
+    - name: Run backend tests
+      run: npm t --prefix web_api/tests web_api/tests
+
+    - name: Stop the server
+      run: killall secrethitler-web-api

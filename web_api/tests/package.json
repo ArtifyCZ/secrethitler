@@ -1,7 +1,6 @@
 {
 	"scripts": {
-		"test": "cargo build --release && jest -i",
-        "coverage": "cargo build --release && jest --collectCoverage -i"
+		"test": "jest --ci"
 	},
 	"dependencies": {
 		"jest": "^27.5.1",
