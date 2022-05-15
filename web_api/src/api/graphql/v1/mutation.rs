@@ -9,14 +9,17 @@ fn uuid_parse_err() -> FieldError {
     FieldError::new(
         "Invalid uuid.",
         Value::Null
-    )}
+    )
+}
 
 fn slot_not_found_err(uuid: Uuid) -> FieldError {
     FieldError::new(
         "Slot not found.",
         graphql_value!({
             "uuid": (uuid.to_string())
-        }))}
+        })
+    )
+}
 
 pub struct Mutation;
 #[graphql_object(context = GraphQLContext)]
@@ -26,7 +29,8 @@ impl Mutation {
             FieldError::new(
                 "Failed to create a slot.",
                 Value::Null
-            )}
+            )
+        }
 
         match players {
             5..=10 => {
@@ -41,7 +45,8 @@ impl Mutation {
                     "Invalid players count. Must be in range 5..=10.",
                     graphql_value!({
                         "players": players
-                    })))
+                    })
+                ))
             }
         }
     }
@@ -52,7 +57,9 @@ impl Mutation {
                 "Failed to start game.",
                 graphql_value!({
                         "uuid": (uuid.to_string())
-                }))}
+                })
+            )
+        }
 
         let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
         let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
@@ -67,7 +74,9 @@ impl Mutation {
                 "Failed to join.",
                 graphql_value!({
                     "uuid": (uuid.to_string())
-                }))}
+                })
+            )
+        }
 
         let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
         let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
