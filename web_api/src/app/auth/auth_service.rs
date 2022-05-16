@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use actix_web::{FromRequest, HttpMessage, HttpRequest};
@@ -33,10 +34,10 @@ impl AuthService {
     }
 
     /// TODO: Implement error returning in get_session.
-    pub fn get_session(&self, token: Uuid) -> Result<Session, ()> {
+    pub fn get_session(&self, token: &Uuid) -> Result<Session, ()> {
         match self.data.read() {
             Ok(data) => {
-                data.sessions.get(&token).cloned()
+                data.sessions.get(token).cloned()
                     .ok_or(())
             },
             Err(_) => Err(())
@@ -68,13 +69,8 @@ impl AuthService {
     pub fn logout(&self, token: Uuid) -> Result<Session, ()> {
         match self.data.write() {
             Ok(mut data) => {
-                if !data.sessions.contains_key(&token) {
-                    return Err(());
-                }
+                let session = data.sessions.remove(&token).ok_or(())?;
 
-                let session = data.sessions.get(&token).ok_or(())?.clone();
-
-                data.sessions.remove(&token).ok_or(())?;
                 if session.user_type() == UserType::Temp {
                     self.users.delete(session.uuid())?;
                 }
