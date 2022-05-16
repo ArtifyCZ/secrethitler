@@ -30,18 +30,14 @@ const loginAnonymous = async (username) => {
 }
 
 const checkSession = async (id, token) => {
-    const check_res = await request.post('/auth/check_session').send({
-        token
-    })
+    const check_res = await request.get('/auth').set({ 'Authorization': token })
     expect(check_res.status).toEqual(200)
     const check_id = check_res.body.id
     expect(check_id).toBe(id)
 }
 
 const logout = async (token) => {
-    const logout_res = await request.delete('/auth').send({
-        token
-    })
+    const logout_res = await request.delete('/auth').set({ 'Authorization': token })
     expect(logout_res.status).toEqual(204)
 }
 
