@@ -11,17 +11,36 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+# Rust backend
     - name: Build the backend
-      run: cargo build --release --manifest-path=web_api/Cargo.toml
+      working-directory: web_api
+      run: cargo build --release
 
     - name: Start the API server
-      run: web_api/target/release/secrethitler-web-api&
+      working-directory: web_api
+      run: target/release/secrethitler-web-api&
 
     - name: Install test dependencies
-      run: npm i --prefix web_api/tests web_api/tests
+      working-directory: web_api
+      run: npm i
 
     - name: Run backend tests
-      run: npm t --prefix web_api/tests web_api/tests
+      working-directory: web_api
+      run: npm t
 
+# Flutter frontend
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Get flutter dependencies
+      working-directory: flutter_client
+      run: flutter pub get
+
+    - name: Build and test the flutter frontend client
+      working-directory: flutter_client
+      run: flutter test integration_test
+
+# Cleanup
     - name: Stop the server
       run: killall secrethitler-web-api
