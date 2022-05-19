@@ -3,6 +3,7 @@ import 'package:secrethitler/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:secrethitler/client/game_client.dart';
 import 'package:secrethitler/game/theme.dart';
+import 'package:secrethitler/views/secrethitler_creategame.dart';
 
 import 'views/secrethitler_home.dart';
 import 'views/secrethitler_game.dart';
@@ -62,7 +63,7 @@ class SecretHitlerApp extends StatelessWidget {
             );
           case 'create':
             return MaterialPageRoute(
-              builder: (context) => SecretHitlerLoginPage(),
+              builder: (context) => const SecretHitlerCreateGamePage(),
               settings: routeSettings,
             );
           default:

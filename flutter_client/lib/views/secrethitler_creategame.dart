@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:secrethitler/logger.dart';
+import '../client/game_client.dart';
 
 class SecretHitlerCreateGamePage extends StatefulWidget {
   const SecretHitlerCreateGamePage({Key? key}) : super(key: key);
@@ -15,7 +16,11 @@ class _SecretHitlerCreateGamePageState extends State<SecretHitlerCreateGamePage>
 
   void _createGame() {
     log.i('Creating a new game');
-    //TODO: GameClient.createGame();
+    GameClient.createGame().then((uuid) {
+      if (uuid != null) {
+        Navigator.pushNamed(context, "/slot/$uuid");
+      }
+    });
   }
 
   @override
@@ -23,10 +28,6 @@ class _SecretHitlerCreateGamePageState extends State<SecretHitlerCreateGamePage>
     return Material(
       child: Column(
         children: [
-          ElevatedButton(
-            onPressed: _createGame,
-            child: const Text('Create game'),
-          ),
           Expanded(
             child: TextField(
               controller: _slotNameController,
@@ -46,9 +47,8 @@ class _SecretHitlerCreateGamePageState extends State<SecretHitlerCreateGamePage>
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              _createGame();
-            },
+            key: const Key('btn_create_slot'),
+            onPressed: _createGame,
             child: const Text("Create game"),
           ),
         ],

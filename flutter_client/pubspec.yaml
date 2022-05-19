@@ -38,6 +38,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   flutter_svg: ^1.0.0
   logger: ^1.1.0
+  graphql_flutter: ^5.1.0
 
 dev_dependencies:
   flutter_test:

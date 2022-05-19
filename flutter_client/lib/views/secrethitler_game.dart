@@ -97,6 +97,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
     //   log("Error while getting board: ${e.toString()}");
     // });
     _board = GameBoard(
+      key: const Key('game_board'),
       blueCards: 5,
       redCards: 6,
       failedElections: 1,
@@ -112,7 +113,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Game: id=${widget.gameId}');
+    log.i('Game: id=${widget.gameId}');
     // log('Args: ${ModalRoute.of(context)?.settings.arguments}');
     return Material(
       child: Row(

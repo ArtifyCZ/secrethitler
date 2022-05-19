@@ -1,16 +1,34 @@
 import 'package:secrethitler/logger.dart';
 import '../game/common.dart';
 import 'http_client.dart';
+import 'package:graphql/client.dart';
 
 
 class GameClient {
   static final log = getLogger('GameClient');
 
   static late final HttpClient _client;
+  static late final GraphQLClient _graphQLClient;
   static String? _playerId;
 
   static void init(String endpoint) {
     _client = HttpClient(endpoint);
+
+    final _httpLink = HttpLink('http://$endpoint/graphql/v1');
+
+    final _authLink = AuthLink(
+      getToken: () {
+        return _client.token;
+      }
+    );
+
+    Link _link = _authLink.concat(_httpLink);
+
+    _graphQLClient = GraphQLClient(
+      /// **NOTE** The default store is the InMemoryStore, which does NOT persist to disk
+      cache: GraphQLCache(),
+      link: _link,
+    );
   }
 
   static Future<Map<String, dynamic>> getBoard() async {
@@ -62,10 +80,36 @@ class GameClient {
   }
 
 
-  static Future<bool> createGame() async {
+  static Future<String?> createGame() async {
+    const String createSlot = r'''
+      mutation CreateSlot($nPlayers: Int!) {
+        createSlot(players: $nPlayers) {
+          uuid
+        } 
+      }
+    ''';
 
+    int nPlayers = 5;
 
-    return false;
+    final QueryOptions options = QueryOptions(
+      document: gql(createSlot),
+      variables: <String, dynamic>{
+        'nPlayers': nPlayers,
+      },
+    );
+
+    final QueryResult result = await _graphQLClient.query(options);
+
+    if (result.hasException) {
+      log.e(result.exception.toString());
+      return null;
+    }
+
+    String uuid = result.data?['createSlot']['uuid'] as String;
+
+    log.i("UUID of the new slot: '$uuid'");
+
+    return uuid;
   }
 
   // Authentication:
