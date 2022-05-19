@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 
 class SecretHitlerCreateGamePage extends StatefulWidget {
   const SecretHitlerCreateGamePage({Key? key}) : super(key: key);
@@ -9,12 +9,12 @@ class SecretHitlerCreateGamePage extends StatefulWidget {
       _SecretHitlerCreateGamePageState();
 }
 
-class _SecretHitlerCreateGamePageState
-    extends State<SecretHitlerCreateGamePage> {
+class _SecretHitlerCreateGamePageState extends State<SecretHitlerCreateGamePage> {
+  final log = getLogger('CreateGamePage');
   final _slotNameController = TextEditingController();
 
   void _createGame() {
-    log('Creating a new game');
+    log.i('Creating a new game');
     //TODO: GameClient.createGame();
   }
 

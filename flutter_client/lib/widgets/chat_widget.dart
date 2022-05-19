@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 import '../client/game_client.dart';
 
 class Chat extends StatelessWidget {
+  final log = getLogger('Chat');
   Chat({
     Key? key,
   }) : super(key: key);
@@ -16,7 +17,7 @@ class Chat extends StatelessWidget {
   final _msgController = TextEditingController();
 
   void _sendChatMsg(String msg) {
-    log('Sending chat message: "$msg"');
+    log.i('Sending chat message: "$msg"');
     GameClient.sendChatMsg(msg);
   }
 

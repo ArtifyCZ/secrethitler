@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 
 class SecretHitlerHomePage extends StatefulWidget {
 
@@ -10,14 +10,15 @@ class SecretHitlerHomePage extends StatefulWidget {
 }
 
 class _SecretHitlerHomePageState extends State<SecretHitlerHomePage> {
+  final log = getLogger('HomePage');
   final _gameIdController = TextEditingController();
 
   void _joinGame(String id) {
-    log('Joining $id');
+    log.i('Joining $id');
     Navigator.pushNamed(context, "/slot/$id");
   }
   void _createGame() {
-    log('Creating a new game');
+    log.i('Creating a new game');
     Navigator.pushNamed(context, "/create");
   }
 

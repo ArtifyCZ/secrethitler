@@ -1,8 +1,11 @@
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 import '../game/common.dart';
 import 'http_client.dart';
 
+
 class GameClient {
+  static final log = getLogger('GameClient');
+
   static late final HttpClient _client;
   static String? _playerId;
 
@@ -19,7 +22,8 @@ class GameClient {
       'vote': vote.toString(),
     };
     _client.postData('vote', data).onError((error, stackTrace) {
-      log("Error while voting: ${error.toString()}", name: "GameClient");
+      log.e("Error while voting: ${error.toString()}");
+      return null;
     });
   }
 
@@ -28,7 +32,8 @@ class GameClient {
       'discardPolicy': index,
     };
     _client.postData('discardPolicy', data).onError((error, stackTrace) {
-      log("Error while discarding policy: ${error.toString()}", name: "GameClient");
+      log.e("Error while discarding policy: ${error.toString()}");
+      return null;
     });
   }
 
@@ -37,7 +42,8 @@ class GameClient {
       'chancellor': index,
     };
     _client.postData('chooseChancellor', data).onError((error, stackTrace) {
-      log("Cannot choose chancellor: ${error.toString()}", name: "GameClient");
+      log.e("Cannot choose chancellor: ${error.toString()}");
+      return null;
     });
   }
 
@@ -53,6 +59,13 @@ class GameClient {
       'msg': msg,
     };
     _client.postData('chat', data);
+  }
+
+
+  static Future<bool> createGame() async {
+
+
+    return false;
   }
 
   // Authentication:
@@ -73,18 +86,18 @@ class GameClient {
       return _client.getData('auth').then((value) {
         String id = value['id'];
         if (id == _playerId) {
-          log("Session check successful", name: "GameClient");
+          log.i("Session check successful");
           return true;
         } else {
-          log("Session check failed:", error: "ids don't match '$_playerId' vs '$id'", name: "GameClient");
+          log.e("Session check failed: ids don't match '$_playerId' vs '$id'");
           return false;
         }
       }, onError: (error) {
-        log("Session check failed:", error: error, name: "GameClient");
+        log.e("Session check failed: $error");
         return false;
       });
     }, onError: (error) {
-      log("Login failed: ", error: error, name: "GameClient");
+      log.e("Login failed: $error");
       return false;
     });
   }
@@ -94,7 +107,7 @@ class GameClient {
       log.i('Logged out');
       _client.token = null;
     }, onError: (error) {
-      log("Log out failed:", error: error, name: "GameClient");
+      log.e("Log out failed: $error");
     });
   }
 

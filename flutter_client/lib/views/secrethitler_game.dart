@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:secrethitler/widgets/game_board.dart';
+import 'package:secrethitler/logger.dart';
 
 import '../game/common.dart';
+import '../widgets/game_board.dart';
 import '../widgets/history_overview.dart';
 import '../widgets/chat_widget.dart';
 import '../game/theme.dart';
@@ -19,6 +18,8 @@ class SecretHitlerGamePage extends StatefulWidget {
 }
 
 class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
+  final log = getLogger('GamePage');
+
   // late String gameId;
   late GameBoard _board;
   late List<int> _susLevels;
@@ -60,22 +61,22 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   ];
 
   void _onVote(Vote vote) {
-    log('Voted ${vote.toString()}');
+    log.i('Voted ${vote.toString()}');
     GameClient.vote(vote);
   }
 
   void _onDiscardPolicy(int index) {
-    log('Discarded $index');
+    log.i('Discarded $index');
     GameClient.discardPolicy(index);
   }
 
   void _chooseChancellor(int index) {
-    log('Choosing chancellor: #$index');
+    log.i('Choosing chancellor: #$index');
     GameClient.chooseChancellor(index);
   }
 
   void _specialAction(int index) {
-    log('Performing special action: #$index');
+    log.i('Performing special action: #$index');
     GameClient.specialAction(index);
   }
 

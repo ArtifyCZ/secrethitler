@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 
 import 'package:flutter/material.dart';
 import 'package:secrethitler/client/game_client.dart';

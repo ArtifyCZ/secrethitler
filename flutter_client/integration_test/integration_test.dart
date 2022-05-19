@@ -1,17 +1,21 @@
+import 'package:secrethitler/logger.dart';
 
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'package:flutter/material.dart';
 import 'package:secrethitler/main.dart';
 import 'package:secrethitler/client/game_client.dart';
 
 void main() {
+  final log = getLogger('Tester');
+
+  log.i('Starting test...');
+
+  GameClient.init("127.0.0.1:8000");
 
   testWidgets('Login and create a new slot', (WidgetTester tester) async {
-    GameClient.init("127.0.0.1:8000");
+    log.i('Starting app...');
     // Build our app and trigger a frame.
     await tester.pumpWidget(const SecretHitlerApp());
 
@@ -33,6 +37,7 @@ void main() {
     expect(find.byKey(const Key('error_box')), findsNothing);
 
 
+    log.i('Creating a new slot...');
     // Expect home page
     var btnCreate = find.byKey(const Key('btn_create'));
     var textGameId = find.byKey(const Key('text_game_id'));
@@ -45,4 +50,3 @@ void main() {
     await tester.pumpAndSettle();
   });
 }
-
