@@ -33,13 +33,17 @@ jobs:
       with:
         channel: 'stable'
 
+    - name: Configure flutter
+      working-directory: flutter_client
+      run: flutter config --no-analytics
+
     - name: Get flutter dependencies
       working-directory: flutter_client
       run: flutter pub get
 
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
-      run: flutter test integration_test
+      run: flutter test -d linux integration_test
 
 # Cleanup
     - name: Stop the server
