@@ -16,6 +16,11 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
   void _login(BuildContext context, String username) {
     setState(() {
       loginFuture = GameClient.anonymousLogin(username);
+      loginFuture?.then((result) {
+        if (result == true) {
+          Navigator.pushNamed(context, "/");
+        }
+      });
     });
   }
 
@@ -44,8 +49,11 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
                     return Text(snapshot.error.toString());
                   } else if (snapshot.hasData) {
                     if (snapshot.data!) {
-                      Navigator.pushNamed(context, "/");
-                      return const Text('Login successful');
+                      return Container(
+                        color: Colors.green,
+                        padding: const EdgeInsets.all(5),
+                        child: const Text('Login successful'),
+                      );
                     } else {
                       return Container(
                         key: const Key('error_box'),
@@ -55,7 +63,7 @@ class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
                       );
                     }
                   } else {
-                    return Text('No data');
+                    return const Text('No data');
                   }
               }
             },

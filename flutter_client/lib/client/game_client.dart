@@ -4,9 +4,7 @@ import 'http_client.dart';
 
 class GameClient {
   static late final HttpClient _client;
-  static String _token = "";
-  static String _playerId = "";
-  static bool authenticated = false;
+  static String? _playerId;
 
   static void init(String endpoint) {
     _client = HttpClient(endpoint);
@@ -59,24 +57,21 @@ class GameClient {
 
   // Authentication:
   static Future<bool> anonymousLogin(String username) async {
-    if (authenticated) return false;
+    if (isAuthenticated()) return false;
 
     var data = {
       'username': username,
     };
 
     return _client.postData('auth/anonymous', data).then((value) async {
-      _token = value!['token'];
+      if (value == null) return false;
+
+      _client.token = value['token'];
       _playerId = value['id'];
-      authenticated = true;
-      log("Received id '$_playerId' and token '$_token' ", name: "GameClient");
+      log.i("Received id '$_playerId' and token '${_client.token}' ");
 
-      data = {
-        'token': _token,
-      };
-
-      return _client.postData('auth/check_session', data).then((value) {
-        String id = value!['id'];
+      return _client.getData('auth').then((value) {
+        String id = value['id'];
         if (id == _playerId) {
           log("Session check successful", name: "GameClient");
           return true;
@@ -95,17 +90,15 @@ class GameClient {
   }
 
   static void logout() async {
-    final data = {
-      'token': _token,
-    };
-
-    await _client.deleteData('auth/anonymous', data).then((value) {
-      log('Logged out', name: "GameClient");
-      _token = "";
-      _playerId = "";
-      authenticated = false;
+    await _client.deleteData('auth').then((value) {
+      log.i('Logged out');
+      _client.token = null;
     }, onError: (error) {
       log("Log out failed:", error: error, name: "GameClient");
     });
+  }
+
+  static bool isAuthenticated () {
+    return _client.token != null;
   }
 }

@@ -1,21 +1,21 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:secrethitler/client/game_client.dart';
+import 'package:integration_test/integration_test.dart';
 
 import 'package:secrethitler/main.dart';
+import 'package:secrethitler/client/game_client.dart';
 
 void main() {
+
   testWidgets('Login and create a new slot', (WidgetTester tester) async {
     GameClient.init("127.0.0.1:8000");
     // Build our app and trigger a frame.
     await tester.pumpWidget(const SecretHitlerApp());
+
+    const String username = 'Flutter Test';
 
     // Expect login form
     var btnLogin = find.byKey(const Key('btn_login'));
@@ -23,11 +23,12 @@ void main() {
     expect(textUsername, findsOneWidget);
     expect(btnLogin, findsOneWidget);
 
-    await tester.enterText(textUsername, 'My Name');
+    log.i('Authenticating...');
+    await tester.enterText(textUsername, username);
     await tester.tap(btnLogin);
     await tester.pumpAndSettle();
 
-    expect(GameClient.authenticated, true);
+    expect(GameClient.isAuthenticated(), equals(true));
 
     expect(find.byKey(const Key('error_box')), findsNothing);
 
@@ -44,3 +45,4 @@ void main() {
     await tester.pumpAndSettle();
   });
 }
+
