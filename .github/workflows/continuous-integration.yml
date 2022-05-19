@@ -21,11 +21,11 @@ jobs:
       run: target/release/secrethitler-web-api&
 
     - name: Install test dependencies
-      working-directory: web_api
+      working-directory: web_api/tests
       run: npm i
 
     - name: Run backend tests
-      working-directory: web_api
+      working-directory: web_api/tests
       run: npm t
 
 # Flutter frontend
