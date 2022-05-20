@@ -60,11 +60,46 @@ impl Mutation {
                 })
             )
         }
+        fn unauthorized() -> FieldError {
+            FieldError::new(
+                "User not slot admin",
+                Value::Null
+            )
+        }
 
         let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
         let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
+        if slot.admin().map_err(|_| unauthorized())? != context.user {
+            return Err(unauthorized());
+        }
         slot.start_game().map_err(|_| start_err(uuid))?;
         let res = Slot::from_domain(slot).map_err(|_| start_err(uuid))?;
+        Ok(res)
+    }
+
+    pub fn stop_game(&self, context: &GraphQLContext, uuid: String) -> FieldResult<Slot> {
+        fn stop_err(uuid: Uuid) -> FieldError {
+            FieldError::new(
+                "Failed to stop game.",
+                graphql_value!({
+                        "uuid": (uuid.to_string())
+                })
+            )
+        }
+        fn unauthorized() -> FieldError {
+            FieldError::new(
+                "User not slot admin",
+                Value::Null
+            )
+        }
+
+        let uuid = Uuid::from_str(uuid.as_str()).map_err(|_| uuid_parse_err())?;
+        let slot = context.slots.find(&uuid).map_err(|_| slot_not_found_err(uuid))?;
+        if slot.admin().map_err(|_| unauthorized())? != context.user {
+            return Err(unauthorized());
+        }
+        slot.start_game().map_err(|_| stop_err(uuid))?;
+        let res = Slot::from_domain(slot).map_err(|_| stop_err(uuid))?;
         Ok(res)
     }
 

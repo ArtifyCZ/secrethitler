@@ -63,7 +63,7 @@ test('Try to start and stop a game.', async () => {
         const join_res = await request.post('/graphql/v1').set({ 'Authorization': token }).send({
             query: `
             mutation {
-                joinSlot(uuid: ${slot_id}) {
+                joinSlot(uuid: "${slot_id}") {
                     uuid,
                     inGame,
                     admin {
@@ -90,7 +90,7 @@ test('Try to start and stop a game.', async () => {
         const check_res = await request.post('/graphql/v1').set({ 'Authorization': token }).send({
             query: `
             query {
-                findSlot(uuid: ${slot_id}) {
+                findSlot(uuid: "${slot_id}") {
                     players {
                         uuid
                     }
@@ -99,7 +99,7 @@ test('Try to start and stop a game.', async () => {
         })
         expect(check_res.status).toEqual(200)
         const check_obj = check_res.body.data.findSlot.players
-        expect(check_obj).contains(id)
+        expect(check_obj).toContainEqual({ 'uuid': id })
     }
 
     await checkPlayerJoined(admin)
@@ -108,10 +108,10 @@ test('Try to start and stop a game.', async () => {
     await checkPlayerJoined(u3)
     await checkPlayerJoined(u4)
 
-    const start_res = await request.post('/graphql/v1').set({ 'Authorization': token }).send({
+    const start_res = await request.post('/graphql/v1').set({ 'Authorization': admin.token }).send({
         query: `
         mutation {
-            startGame(uuid: ${slot_id}) {
+            startGame(uuid: "${slot_id}") {
                 uuid
             }
         }`
@@ -125,16 +125,16 @@ test('Try to start and stop a game.', async () => {
     await checkPlayerJoined(u3)
     await checkPlayerJoined(u4)
 
-    const stop_res = await request.post('/graphql/v1').set({ 'Authorization': token }).send({
+    const stop_res = await request.post('/graphql/v1').set({ 'Authorization': admin.token }).send({
         query: `
         mutation {
-            stopGame(uuid: ${slot_id}) {
+            stopGame(uuid: "${slot_id}") {
                 uuid
             }
         }`
     })
     expect(stop_res.status).toEqual(200)
-    expect(stop_res.body.data.startGame.uuid).toEqual(slot_id)
+    expect(stop_res.body.data.stopGame.uuid).toEqual(slot_id)
 
     await checkPlayerJoined(admin)
     await checkPlayerJoined(u1)
@@ -143,7 +143,6 @@ test('Try to start and stop a game.', async () => {
     await checkPlayerJoined(u4)
 
     await logout(admin.token)
-    await logout(u1.token)
     await logout(u1.token)
     await logout(u2.token)
     await logout(u3.token)
