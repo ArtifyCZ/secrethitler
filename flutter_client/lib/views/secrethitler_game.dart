@@ -11,7 +11,6 @@ import '../client/game_client.dart';
 class SecretHitlerGamePage extends StatefulWidget {
   final String gameId;
   const SecretHitlerGamePage({Key? key, required this.gameId}) : super(key: key);
-  // const SecretHitlerGamePage({Key? key}) : super(key: key);
 
   @override
   State<SecretHitlerGamePage> createState() => _SecretHitlerGamePageState();
@@ -20,7 +19,6 @@ class SecretHitlerGamePage extends StatefulWidget {
 class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   final log = getLogger('GamePage');
 
-  // late String gameId;
   late GameBoard _board;
   late List<int> _susLevels;
 
@@ -114,7 +112,6 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   @override
   Widget build(BuildContext context) {
     log.i('Game: id=${widget.gameId}');
-    // log('Args: ${ModalRoute.of(context)?.settings.arguments}');
     return Material(
       child: Row(
         children: [
