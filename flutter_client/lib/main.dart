@@ -1,4 +1,4 @@
-import 'package:secrethitler/logger.dart';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:secrethitler/client/game_client.dart';
@@ -10,7 +10,9 @@ import 'views/secrethitler_game.dart';
 import 'views/secrethitler_login.dart';
 
 void main() {
-  GameClient.init("localhost:8000");
+  String host = Platform.environment['HOST'] ?? "127.0.0.1";
+  String port = Platform.environment['PORT'] ?? "8000";
+  GameClient.init("$host:$port");
   runApp(const SecretHitlerApp());
 }
 

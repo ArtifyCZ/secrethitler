@@ -12,6 +12,7 @@ class GameClient {
   static String? _playerId;
 
   static void init(String endpoint) {
+    log.i("Using API at $endpoint");
     _client = HttpClient(endpoint);
 
     final _httpLink = HttpLink('http://$endpoint/graphql/v1');

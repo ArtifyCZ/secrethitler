@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:io';
 
 import 'package:secrethitler/logger.dart';
 
@@ -15,7 +16,11 @@ void main() {
 
     log.i('Starting test...');
 
-    GameClient.init("127.0.0.1:8000");
+    String host = Platform.environment['HOST'] ?? "127.0.0.1";
+    String port = Platform.environment['PORT'] ?? "8000";
+
+    GameClient.init("$host:$port");
+
 
     log.i('Starting app...');
 
