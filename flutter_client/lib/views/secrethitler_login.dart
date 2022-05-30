@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import '../client/game_client.dart';
 
@@ -11,79 +10,96 @@ class SecretHitlerLoginPage extends StatefulWidget {
 
 class _SecretHitlerLoginPageState extends State<SecretHitlerLoginPage> {
   final _usernameController = TextEditingController();
-  String _error = "";
+  Future<bool>? loginFuture;
 
-  void _login (BuildContext context, String username) {
-    GameClient.anonymousLogin(username).then((value) {
-      if (value) {
-        Navigator.pushNamed(context, "/");
-      } else {
-        setState(() {
-          _error = "Error while logging in";
-        });
-      }
+  void _login(BuildContext context, String username) {
+    setState(() {
+      loginFuture = GameClient.anonymousLogin(username);
+      loginFuture?.then((result) {
+        if (result == true) {
+          Navigator.pushNamed(context, "/");
+        }
+      });
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    loginFuture = null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Material(
-      child: Container(
-        height: size.height,
-        width: size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            errorBox(context),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _usernameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your username',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FutureBuilder<bool>(
+            future: loginFuture,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Container();
+                case ConnectionState.waiting:
+                  return const CircularProgressIndicator();
+                default:
+                  if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  } else if (snapshot.hasData) {
+                    if (snapshot.data!) {
+                      return Container(
+                        color: Colors.green,
+                        padding: const EdgeInsets.all(5),
+                        child: const Text('Login successful'),
+                      );
+                    } else {
+                      return Container(
+                        key: const Key('error_box'),
+                        color: Colors.red,
+                        padding: const EdgeInsets.all(5),
+                        child: const Text('Error while logging in'),
+                      );
+                    }
+                  } else {
+                    return const Text('No data');
+                  }
+              }
+            },
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  key: const Key('text_username'),
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your username',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
                       ),
                     ),
-                    onSubmitted: (value) => _login(context, value),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
                   ),
+                  onSubmitted: (value) => _login(context, value),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    _login(context, _usernameController.text);
-                  },
-                  child: const Text("Login"),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              ElevatedButton(
+                key: const Key('btn_login'),
+                onPressed: () {
+                  _login(context, _usernameController.text);
+                },
+                child: const Text("Login"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
-
-
-  Widget errorBox (BuildContext context) {
-    if (_error != "") {
-      return Container(
-        color: Colors.red,
-        padding: const EdgeInsets.all(5),
-        child: Text(_error),
-      );
-    } else {
-      return Container();
-    }
-  }
 }
-
