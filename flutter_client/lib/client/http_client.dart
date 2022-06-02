@@ -7,11 +7,10 @@ final _log = getLogger('GameClient');
 
 class MyHttpClient {
   final String _endpoint;
-  final HttpClient _http;
 
   String? _token;
 
-  MyHttpClient(this._endpoint) : _http = HttpClient();
+  MyHttpClient(this._endpoint);
 
   String getToken() {
     _log.wtf("getToken -> '$_token'");
