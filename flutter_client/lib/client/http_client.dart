@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:html';
 import 'package:http/http.dart' as http;
 import 'package:secrethitler/logger.dart';
 
@@ -21,8 +19,6 @@ class MyHttpClient {
   void setToken(String token) {
     _log.wtf("setToken('$token')");
     _token = token;
-
-    document.cookie = "Authorization=$token";
   }
   void clearToken() {
     _log.wtf("clearToken()");
