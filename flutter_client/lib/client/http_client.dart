@@ -6,23 +6,13 @@ import 'package:secrethitler/logger.dart';
 
 final _log = getLogger('GameClient');
 
-class HttpClient {
+class MyHttpClient {
   final String _endpoint;
-  late final WebSocketChannel _channel;
+  final HttpClient _http;
 
   String? _token;
 
-  HttpClient(this._endpoint) {
-    // channel = WebSocketChannel.connect(
-    //   Uri.parse('wss://' + endpoint),
-    // );
-    // channel.stream.listen(
-    //   (data) {
-    //     log(data);
-    //   },
-    //   onError: (error) => log(error.toString()),
-    // );
-  }
+  MyHttpClient(this._endpoint) : _http = HttpClient();
 
   String getToken() {
     _log.wtf("getToken -> '$_token'");
@@ -43,7 +33,8 @@ class HttpClient {
 
   Future<Map<String, dynamic>> getData(String path) async {
     final headers = {
-      'Authorization': getToken(),
+      // 'Authorization': getToken(),
+      'Cookie': "Authorization=${getToken()}",
     };
     try {
       var response = await http.get(Uri.http(_endpoint, path), headers: headers);
@@ -64,7 +55,8 @@ class HttpClient {
       String path, Map<String, dynamic> data) async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': getToken(),
+      // 'Authorization': getToken(),
+      'Cookie': "Authorization=${getToken()}",
     };
     try {
       var response = await http.post(Uri.http(_endpoint, path),
@@ -87,7 +79,8 @@ class HttpClient {
   Future<void> deleteData(String path) async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': getToken(),
+      // 'Authorization': getToken(),
+      'Cookie': "Authorization=${getToken()}",
     };
     try {
       var response = await http.delete(Uri.http(_endpoint, path), headers: headers);

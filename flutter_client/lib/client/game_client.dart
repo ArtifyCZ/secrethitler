@@ -3,11 +3,10 @@ import '../game/common.dart';
 import 'http_client.dart';
 import 'package:graphql/client.dart';
 
-
 class GameClient {
   static final log = getLogger('GameClient');
 
-  static late final HttpClient _client;
+  static late final MyHttpClient _client;
   static late final GraphQLClient _graphQLClient;
   static late String _endpoint;
   static String? _playerId;
@@ -16,18 +15,19 @@ class GameClient {
     _endpoint = endpoint;
 
     log.i("Using API at $_endpoint");
-    _client = HttpClient(_endpoint);
+    _client = MyHttpClient(_endpoint);
   }
 
-  static void initGraphQL () {
-    final _httpLink = HttpLink('http://$_endpoint/graphql/v1');
-
-    final _authLink = AuthLink(
-        getToken: () {
-          log.d("GQL is using '${_client.getToken()}' token");
-          return _client.getToken();
-        }
+  static void initGraphQL() {
+    final _httpLink = HttpLink(
+      'http://$_endpoint/graphql/v1',
+      defaultHeaders: {"Cookie": "Authorization=${_client.getToken()}"},
     );
+
+    final _authLink = AuthLink(getToken: () {
+      log.d("GQL is using '${_client.getToken()}' token");
+      return _client.getToken();
+    });
 
     Link _link = _authLink.concat(_httpLink);
 
@@ -35,11 +35,10 @@ class GameClient {
     log.d("Creating websocket link");
 
     final Link _wsLink = WebSocketLink(
-        'ws://$_endpoint/graphql/v1/websocket',
-
+      'ws://$_endpoint/graphql/v1/websocket',
       config: SocketClientConfig(
         headers: {
-          'Authorization': _client.getToken(),
+          "Cookie": "Authorization=${_client.getToken()}",
         }
       ),
     );
@@ -54,7 +53,7 @@ class GameClient {
     );
   }
 
-  static void subscribeGame (String uuid) {
+  static void subscribeGame(String uuid) {
     log.d("Subscribing");
     final subscriptionDocument = gql(
       '''
@@ -67,13 +66,13 @@ class GameClient {
     );
     var subscription = _graphQLClient.subscribe(
       SubscriptionOptions(
-          document: subscriptionDocument,
+        document: subscriptionDocument,
       ),
     );
     subscription.listen(onTestSubscription);
   }
 
-  static void onTestSubscription (QueryResult result) {
+  static void onTestSubscription(QueryResult result) {
     log.w("Data: ${result.data}");
   }
 
@@ -124,7 +123,6 @@ class GameClient {
     };
     _client.postData('chat', data);
   }
-
 
   static Future<String?> createGame() async {
     const String createSlot = r'''
@@ -202,7 +200,7 @@ class GameClient {
     });
   }
 
-  static bool isAuthenticated () {
+  static bool isAuthenticated() {
     return _client.isAuthenticated();
   }
 }
