@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html';
 import 'package:http/http.dart' as http;
 import 'package:secrethitler/logger.dart';
 
@@ -19,6 +21,8 @@ class MyHttpClient {
   void setToken(String token) {
     _log.wtf("setToken('$token')");
     _token = token;
+
+    document.cookie = "Authorization=$token";
   }
   void clearToken() {
     _log.wtf("clearToken()");
@@ -32,10 +36,10 @@ class MyHttpClient {
   Future<Map<String, dynamic>> getData(String path) async {
     final headers = {
       // 'Authorization': getToken(),
-      'Cookie': "Authorization=${getToken()}",
+      // 'Cookie': "Authorization=${getToken()}",
     };
     try {
-      var response = await http.get(Uri.http(_endpoint, path), headers: headers);
+      var response = await http.get(Uri.http(_endpoint, path));
       if (response.statusCode == 200) {
         try {
           return jsonDecode(response.body);
@@ -54,7 +58,7 @@ class MyHttpClient {
     final headers = {
       'Content-Type': 'application/json',
       // 'Authorization': getToken(),
-      'Cookie': "Authorization=${getToken()}",
+      // 'Cookie': "Authorization=${getToken()}",
     };
     try {
       var response = await http.post(Uri.http(_endpoint, path),
@@ -78,7 +82,7 @@ class MyHttpClient {
     final headers = {
       'Content-Type': 'application/json',
       // 'Authorization': getToken(),
-      'Cookie': "Authorization=${getToken()}",
+      // 'Cookie': "Authorization=${getToken()}",
     };
     try {
       var response = await http.delete(Uri.http(_endpoint, path), headers: headers);
