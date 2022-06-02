@@ -12,7 +12,8 @@ impl Subscription {
     async fn game(&self, context: &GraphQLContext, uuid: String) -> GameStream {
         let stream = async_stream::stream! {
             loop {
-                yield Ok(Round)
+                yield Ok(Round);
+                break;
             }
         };
         Box::pin(stream)

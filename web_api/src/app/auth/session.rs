@@ -53,22 +53,24 @@ impl Session {
     }
 }
 pub fn session_from_req(req: &HttpRequest, payload: &mut Payload) -> Result<Session, actix_web::error::Error> {
+    fn missing_token_err() -> actix_web::error::Error {
+        actix_web::error::ErrorUnauthorized("Missing token cookie `Authorization`")}
     fn invalid_token_err() -> actix_web::error::Error {
-        actix_web::error::ErrorBadRequest(
-            "Invalid or missing token header `Authorization`."
-        )}
+        actix_web::error::ErrorBadRequest("Invalid token")}
     fn internal_err() -> actix_web::error::Error {
         actix_web::error::ErrorInternalServerError("")}
-    fn unauthorized_err() -> actix_web::error::Error {
-        actix_web::error::ErrorUnauthorized("Token not found.")}
+    fn token_not_found_err() -> actix_web::error::Error {
+        actix_web::error::ErrorForbidden("Token not found")}
+
+    let token = req.cookie("Authorization").ok_or(missing_token_err())?;
+    let token = Uuid::from_str(token.value()).map_err(|_| invalid_token_err())?;
 
     let extensions = req.extensions_mut();
     let auth = extensions.get::<AuthService>()
         .ok_or(internal_err())?;
-    let token = req.headers().get("Authorization").ok_or(invalid_token_err())?
-        .to_str().map_err(|_| invalid_token_err())?;
-    let token = Uuid::from_str(token).map_err(|_| invalid_token_err())?;
-    let session = auth.get_session(&token).map_err(|_| unauthorized_err())?;
+//    let token = req.headers().get("Authorization").ok_or(missing_token_err())?.to_str().map_err(|_| invalid_token_err())?;
+//    let token = Uuid::from_str(token).map_err(|_| invalid_token_err())?;
+    let session = auth.get_session(&token).map_err(|_| token_not_found_err())?;
     Ok(session)
 }
 
