@@ -11,15 +11,16 @@ import 'views/secrethitler_game.dart';
 import 'views/secrethitler_login.dart';
 
 void main() {
-  String host, port;
+  String host;
+  int port;
   if (!kIsWeb) {
     host = Platform.environment['HOST'] ?? "127.0.0.1";
-    port = Platform.environment['PORT'] ?? "8000";
+    port = int.tryParse(Platform.environment['PORT'] ?? "") ?? 8000;
   } else {
     host = "127.0.0.1";
-    port = "8000";
+    port = 8000;
   }
-  GameClient.init("$host:$port");
+  GameClient.init(host, port);
   runApp(const SecretHitlerApp());
 }
 

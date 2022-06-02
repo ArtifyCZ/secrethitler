@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:secrethitler/logger.dart';
 import '../game/common.dart';
 import 'http_client.dart';
@@ -11,11 +12,11 @@ class GameClient {
   static late String _endpoint;
   static String? _playerId;
 
-  static void init(String endpoint) {
-    _endpoint = endpoint;
+  static void init(String host, int port) {
+    _endpoint = "$host:$port";
 
     log.i("Using API at $_endpoint");
-    _client = MyHttpClient(_endpoint);
+    _client = MyHttpClient(host, port);
   }
 
   static void initGraphQL() {

@@ -16,10 +16,13 @@ void main() {
 
     log.i('Starting test...');
 
-    String host = Platform.environment['HOST'] ?? "127.0.0.1";
-    String port = Platform.environment['PORT'] ?? "8000";
+    String host;
+    int port;
 
-    GameClient.init("$host:$port");
+    host = Platform.environment['HOST'] ?? "127.0.0.1";
+    port = int.tryParse(Platform.environment['PORT'] ?? "") ?? 8000;
+
+    GameClient.init(host, port);
 
 
     log.i('Starting app...');
