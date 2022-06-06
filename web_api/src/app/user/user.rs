@@ -1,11 +1,8 @@
-use std::str::FromStr;
-use std::sync::Arc;
-use actix_web::{Error, FromRequest, HttpMessage, HttpRequest};
-use actix_web::dev::Payload;
+use std::{str::FromStr, sync::Arc};
+use actix_web::{Error, FromRequest, HttpMessage, HttpRequest, dev::Payload};
 use futures::future::{ok, ready};
 use uuid::Uuid;
-use crate::app::auth::session::{Session, session_from_req};
-use crate::AuthService;
+use crate::{AuthService, app::auth::session::{Session, session_from_req}};
 
 #[derive(Clone)]
 pub struct User {

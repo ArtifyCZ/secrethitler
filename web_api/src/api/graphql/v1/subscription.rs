@@ -1,7 +1,6 @@
-use crate::api::graphql::v1::object::round::Round;
 use uuid::Uuid;
 use std::pin::Pin;
-use crate::api::graphql::v1::context::GraphQLContext;
+use crate::api::graphql::v1::{context::GraphQLContext, object::round::Round};
 use juniper::{FieldError, FieldResult, graphql_subscription};
 
 pub type GameStream = Pin<Box<dyn futures::Stream<Item = FieldResult<Round>> + Send>>;

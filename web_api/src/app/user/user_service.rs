@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-use std::sync::{Arc, LockResult, RwLock};
+use std::{collections::HashMap, sync::{Arc, LockResult, RwLock}};
 use uuid::Uuid;
 use crate::app::user::user::{User, UserType};
 

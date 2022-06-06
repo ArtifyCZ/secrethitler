@@ -1,9 +1,7 @@
 use std::str::FromStr;
-use juniper::{FieldError, FieldResult, graphql_object, graphql_value, Value};
-use juniper::Selection::Field;
+use juniper::{FieldError, FieldResult, graphql_object, graphql_value, Value, Selection::Field};
 use uuid::Uuid;
-use crate::api::graphql::v1::context::GraphQLContext;
-use crate::api::graphql::v1::object::slot::Slot;
+use crate::api::graphql::v1::{context::GraphQLContext, object::slot::Slot};
 
 fn uuid_parse_err() -> FieldError {
     FieldError::new(

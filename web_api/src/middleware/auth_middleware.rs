@@ -1,9 +1,6 @@
-use std::pin::Pin;
-use std::task::{Context, Poll};
-
+use std::{pin::Pin, task::{Context, Poll}};
 use actix_web::{dev::{ServiceRequest, ServiceResponse, Service, Transform}, Error, HttpMessage, body::MessageBody};
-use futures::future::{ok, Ready};
-use futures::{Future, TryStreamExt};
+use futures::{future::{ok, Ready}, Future, TryStreamExt};
 use crate::app::auth::auth_service::AuthService;
 
 #[derive(Clone)]
@@ -58,7 +55,6 @@ impl<S, B> Service<ServiceRequest> for AuthMiddleware<S>
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
         println!("{}: {}", req.method(), req.uri());
 
-        //TODO: Implement adding the service to the extensions.
         req.extensions_mut().insert(self.auth_service.clone());
 
         let fut = self.service.call(req);

@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-use std::sync::{Arc, LockResult, RwLock};
+use std::{collections::HashMap, sync::{Arc, LockResult, RwLock}};
 use uuid::Uuid;
-use crate::app::slot::slot::Slot;
-use crate::app::user::user::User;
+use crate::app::{slot::slot::Slot, user::user::User};
 
 #[derive(Clone)]
 pub struct SlotService {

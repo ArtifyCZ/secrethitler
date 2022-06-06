@@ -1,8 +1,7 @@
 use std::str::FromStr;
 use juniper::{FieldError, FieldResult, graphql_object, graphql_value, GraphQLObject, Value};
 use uuid::Uuid;
-use crate::api::graphql::v1::context::GraphQLContext;
-use crate::api::graphql::v1::object::slot::Slot;
+use crate::api::graphql::v1::{context::GraphQLContext, object::slot::Slot};
 
 pub struct Query;
 #[graphql_object(context = GraphQLContext)]

@@ -1,5 +1,4 @@
-use crate::app::game::player::Player;
-use crate::app::user::user::User;
+use crate::app::{game::player::Player, user::user::User};
 
 pub struct Game {
     players: Vec<Player>
@@ -18,7 +17,7 @@ impl Game {
         }
     }
 
-    pub fn stop(&self) {
+    pub fn stop(&mut self) {
         todo!("Implement game stopping.")
     }
 }

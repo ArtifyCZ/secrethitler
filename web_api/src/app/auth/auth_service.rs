@@ -1,13 +1,8 @@
-use std::borrow::Borrow;
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-use actix_web::{FromRequest, HttpMessage, HttpRequest};
-use actix_web::dev::Payload;
+use std::{borrow::Borrow, collections::HashMap, sync::{Arc, RwLock}};
+use actix_web::{FromRequest, HttpMessage, HttpRequest, dev::Payload};
 use futures::future::{err, ok};
 use uuid::Uuid;
-use crate::app::auth::session::Session;
-use crate::app::user::user::UserType;
-use crate::app::user::user_service::UserService;
+use crate::app::{auth::session::Session, user::{user::UserType, user_service::UserService}};
 
 #[derive(Clone)]
 pub struct AuthService {

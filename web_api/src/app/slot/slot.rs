@@ -1,7 +1,6 @@
 use std::sync::{Arc, LockResult, RwLock};
 use uuid::Uuid;
-use crate::app::game::game::Game;
-use crate::app::user::user::User;
+use crate::app::{game::game::Game, user::user::User};
 
 #[derive(Clone)]
 pub struct Slot {
@@ -69,9 +68,10 @@ impl Slot {
     pub fn stop_game(&self) -> Result<(), ()> {
         match self.data.write() {
             Ok(mut data) => {
-                if let Some(game) = &data.game {
+                if let Some(mut game) = &data.game {
                     game.stop()
                 }
+                data.game = None;
 
                 Err(())
             },
