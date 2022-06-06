@@ -94,4 +94,14 @@ impl Slot {
             Err(_) => Err(())
         }
     }
+
+    //TODO: Implement error handling.
+    pub fn players(&self) -> Result<Vec<User>, ()> {
+        self.data.read().map_err(|_| ()).map(|data| data.players.clone())
+    }
+
+    //TODO: Implement error handling.
+    pub fn admin(&self) -> Result<User, ()> {
+        self.data.read().map_err(|_| ()).map(|data| data.admin.clone())
+    }
 }

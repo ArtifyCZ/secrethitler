@@ -1,5 +1,4 @@
-use actix_web::{Error, Scope, test, web};
-use actix_web::test::init_service;
+use actix_web::web;
 use actix_web::web::Data;
 use {
     actix_web::{

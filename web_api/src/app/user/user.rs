@@ -47,6 +47,12 @@ impl User {
     }
 }
 
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.data.uuid == other.data.uuid
+    }
+}
+
 impl FromRequest for User {
     type Error = actix_web::error::Error;
     type Future = futures::future::Ready<Result<Self, Self::Error>>;
