@@ -1,4 +1,4 @@
-const { request, checkUUIDValidity, checkSession, loginAnonymous, logout} = require("../index")
+const { request, checkUUIDValidity, checkSession, loginAnonymous, logout, graphql} = require("../index")
 const { generateUsername } = require("unique-username-generator") 
 
 test('GraphQL returns the correct version.', async () => {
@@ -13,19 +13,13 @@ test('Register an anonymous user and create a slot.', async () => {
 
     await checkSession(id, token)
 
-    // create a slot
-    const slot_res = await request.post('/graphql/v1').set({ 'Authorization': token }).send({
-        query: `
+    const slot_id = (await graphql.query(token, '1', `
         mutation {
             createSlot(players: 5) {
                 uuid
             }
-        }`})
-    expect(slot_res.status).toEqual(200)
-    expect(slot_res.body.data).toBeDefined()
-    expect(slot_res.body.data.createSlot).toBeDefined()
-    const slot_id = slot_res.body.data.createSlot.uuid
-    expect(slot_id).toBeDefined()
+        }
+    `)).createSlot.uuid
     expect(checkUUIDValidity(slot_id)).toEqual(true)
 
     await logout(token)
