@@ -36,10 +36,6 @@ impl Session {
         self.data.user.username()
     }
 
-    pub fn is_token(&self, token: Uuid) -> bool {
-        self.data.token == token
-    }
-
     pub fn new(user: User, token: Uuid) -> Self {
         Self {
             data: Arc::new(SessionInner {
@@ -49,7 +45,7 @@ impl Session {
         }
     }
 }
-pub fn session_from_req(req: &HttpRequest, payload: &mut Payload) -> Result<Session, actix_web::error::Error> {
+pub fn session_from_req(req: &HttpRequest) -> Result<Session, actix_web::error::Error> {
     fn missing_token_err() -> actix_web::error::Error {
         actix_web::error::ErrorUnauthorized("Missing token header `Authorization`")}
     fn invalid_token_err() -> actix_web::error::Error {
@@ -75,6 +71,6 @@ impl FromRequest for Session {
     type Future = futures::future::Ready<Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
-        ready(session_from_req(req, payload))
+        ready(session_from_req(req))
     }
 }

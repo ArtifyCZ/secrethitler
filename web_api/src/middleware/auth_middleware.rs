@@ -1,6 +1,6 @@
 use std::{pin::Pin, task::{Context, Poll}};
 use actix_web::{dev::{ServiceRequest, ServiceResponse, Service, Transform}, Error, HttpMessage, body::MessageBody};
-use futures::{future::{ok, Ready}, Future, TryStreamExt};
+use futures::{future::{ok, Ready}, Future};
 use crate::app::auth::auth_service::AuthService;
 
 #[derive(Clone)]
@@ -52,9 +52,7 @@ impl<S, B> Service<ServiceRequest> for AuthMiddleware<S>
         self.service.poll_ready(cx)
     }
 
-    fn call(&self, mut req: ServiceRequest) -> Self::Future {
-        println!("{}: {}", req.method(), req.uri());
-
+    fn call(&self, req: ServiceRequest) -> Self::Future {
         req.extensions_mut().insert(self.auth_service.clone());
 
         let fut = self.service.call(req);

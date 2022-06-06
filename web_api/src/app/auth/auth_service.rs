@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, collections::HashMap, sync::{Arc, RwLock}};
+use std::{collections::HashMap, sync::{Arc, RwLock}};
 use actix_web::{FromRequest, HttpMessage, HttpRequest, dev::Payload};
 use futures::future::{err, ok};
 use uuid::Uuid;
@@ -87,6 +87,6 @@ impl FromRequest for AuthService {
         }
 
         // TODO: Write logging the error - couldn't find the AuthService from the extensions.
-        err((actix_web::error::ErrorInternalServerError("Failed to retrieve the authentication service.")))
+        err(actix_web::error::ErrorInternalServerError("Failed to retrieve the authentication service."))
     }
 }

@@ -1,4 +1,4 @@
-use juniper::{graphql_object, GraphQLObject};
+use juniper::graphql_object;
 use uuid::Uuid;
 use crate::api::graphql::v1::context::GraphQLContext;
 

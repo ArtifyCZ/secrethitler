@@ -1,13 +1,13 @@
-use std::{time::Duration, convert::Infallible, fmt::{Debug, Display, Formatter}, str::FromStr};
-use juniper::{RootNode, ScalarValue, Variables};
-use actix_web::{Error, error::HttpError, HttpRequest, HttpResponse, Scope,
+use std::{time::Duration, fmt::{Debug, Display, Formatter}, str::FromStr};
+use juniper::{RootNode, Variables};
+use actix_web::{Error, HttpRequest, HttpResponse, Scope,
                 web::{ Data, get, Payload, post }};
-use juniper_graphql_ws::{ConnectionConfig, Init};
+use juniper_graphql_ws::ConnectionConfig;
 use juniper_actix::{graphql_handler, subscriptions::subscriptions_handler};
 use uuid::Uuid;
 use crate::{AuthService, api::graphql::v1::{context::GraphQLContext, mutation::Mutation,
                                             subscription::Subscription, query::Query},
-    app::{auth::session::Session, slot::slot_service::SlotService, user::user::{User, UserType}}};
+    app::{slot::slot_service::SlotService, user::user::User}};
 
 mod query;
 mod object;

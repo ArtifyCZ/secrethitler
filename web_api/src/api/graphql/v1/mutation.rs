@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use juniper::{FieldError, FieldResult, graphql_object, graphql_value, Value, Selection::Field};
+use juniper::{FieldError, FieldResult, graphql_object, graphql_value, Value};
 use uuid::Uuid;
 use crate::api::graphql::v1::{context::GraphQLContext, object::slot::Slot};
 
