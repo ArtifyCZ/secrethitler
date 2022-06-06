@@ -14,7 +14,6 @@ mod object;
 mod context;
 mod mutation;
 mod subscription;
-mod websocket;
 
 pub type Schema = RootNode<'static, Query, Mutation, Subscription>;
 pub fn schema() -> Schema {
