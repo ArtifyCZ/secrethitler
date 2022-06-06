@@ -63,7 +63,7 @@ pub fn session_from_req(req: &HttpRequest, payload: &mut Payload) -> Result<Sess
         actix_web::error::ErrorForbidden("Token not found")}
 
     let token: &str = req.headers().get("Authorization").ok_or(missing_token_err())?
-        .to_str().ok_or(invalid_token_err())?;
+        .to_str().map_err(|_| invalid_token_err())?;
     let token = Uuid::from_str(token).map_err(|_| invalid_token_err())?;
 
     let extensions = req.extensions_mut();
