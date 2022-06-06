@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:secrethitler/logger.dart';
 
-final _log = getLogger('GameClient');
+final _log = getLogger('HttpClient');
 
 class MyHttpClient {
   final String _endpoint;
@@ -13,19 +13,15 @@ class MyHttpClient {
   MyHttpClient(this._endpoint);
 
   String getToken() {
-    _log.wtf("getToken -> '$_token'");
     return _token ?? "None";
   }
   void setToken(String token) {
-    _log.wtf("setToken('$token')");
     _token = token;
   }
   void clearToken() {
-    _log.wtf("clearToken()");
     _token = null;
   }
   bool isAuthenticated() {
-    _log.wtf("isAuthenticated -> ${_token != null}");
     return _token != null;
   }
 

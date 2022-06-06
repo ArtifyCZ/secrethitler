@@ -24,10 +24,10 @@ class GameClient {
     );
 
     final _authLink = AuthLink(
+      headerKey: 'Authorization',
       getToken: () {
         return _client.getToken();
       },
-      headerKey: 'Authorization',
     );
 
     Link _link = _authLink.concat(_httpLink);
@@ -38,9 +38,6 @@ class GameClient {
     final Link _wsLink = WebSocketLink(
       'ws://$_endpoint/graphql/v1/websocket',
       config: SocketClientConfig(
-        // headers: {
-        //   "Authorization": _client.getToken(),
-        // },
         initialPayload: {
           "Authorization": _client.getToken(),
         }
@@ -49,18 +46,16 @@ class GameClient {
     _link = Link.split((request) => request.isSubscription, _wsLink, _link);
 
     _graphQLClient = GraphQLClient(
-      /// **NOTE** The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(),
       link: _link,
     );
   }
 
   static void subscribeGame(String uuid) {
-    log.d("Subscribing");
     final subscriptionDocument = gql(
-      '''
-        subscription {
-          game(uuid: "$uuid") {
+      r'''
+        subscription Game($uuid: String!){
+          game(uuid: $uuid) {
             hello
           }
         }
@@ -69,13 +64,16 @@ class GameClient {
     var subscription = _graphQLClient.subscribe(
       SubscriptionOptions(
         document: subscriptionDocument,
+        variables: {
+          'uuid': uuid,
+        }
       ),
     );
-    subscription.listen(onTestSubscription);
+    subscription.listen(onGameSubscription);
   }
 
-  static void onTestSubscription(QueryResult result) {
-    log.w("Data: ${result.data}");
+  static void onGameSubscription(QueryResult result) {
+    log.w("Game: ${result.data}");
   }
 
   static Future<Map<String, dynamic>> getBoard() async {
