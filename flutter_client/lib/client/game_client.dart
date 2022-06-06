@@ -21,13 +21,14 @@ class GameClient {
   static void initGraphQL() {
     final _httpLink = HttpLink(
       'http://$_endpoint/graphql/v1',
-      defaultHeaders: {"Cookie": "Authorization=${_client.getToken()}"},
     );
 
-    final _authLink = AuthLink(getToken: () {
-      log.d("GQL is using '${_client.getToken()}' token");
-      return _client.getToken();
-    });
+    final _authLink = AuthLink(
+      getToken: () {
+        return _client.getToken();
+      },
+      headerKey: 'Authorization',
+    );
 
     Link _link = _authLink.concat(_httpLink);
 
@@ -37,14 +38,15 @@ class GameClient {
     final Link _wsLink = WebSocketLink(
       'ws://$_endpoint/graphql/v1/websocket',
       config: SocketClientConfig(
-        headers: {
-          "Cookie": "Authorization=${_client.getToken()}",
+        // headers: {
+        //   "Authorization": _client.getToken(),
+        // },
+        initialPayload: {
+          "Authorization": _client.getToken(),
         }
       ),
     );
-    // final Link _wsAuthLink = _httpLink.concat(_wsLink);
     _link = Link.split((request) => request.isSubscription, _wsLink, _link);
-    // _link = Link.split((request) => request.isSubscription, _wsAuthLink, _link);
 
     _graphQLClient = GraphQLClient(
       /// **NOTE** The default store is the InMemoryStore, which does NOT persist to disk

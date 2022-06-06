@@ -31,11 +31,10 @@ class MyHttpClient {
 
   Future<Map<String, dynamic>> getData(String path) async {
     final headers = {
-      // 'Authorization': getToken(),
-      // 'Cookie': "Authorization=${getToken()}",
+      'Authorization': getToken(),
     };
     try {
-      var response = await http.get(Uri.http(_endpoint, path));
+      var response = await http.get(Uri.http(_endpoint, path), headers: headers);
       if (response.statusCode == 200) {
         try {
           return jsonDecode(response.body);
@@ -53,8 +52,7 @@ class MyHttpClient {
       String path, Map<String, dynamic> data) async {
     final headers = {
       'Content-Type': 'application/json',
-      // 'Authorization': getToken(),
-      // 'Cookie': "Authorization=${getToken()}",
+      'Authorization': getToken(),
     };
     try {
       var response = await http.post(Uri.http(_endpoint, path),
@@ -77,8 +75,7 @@ class MyHttpClient {
   Future<void> deleteData(String path) async {
     final headers = {
       'Content-Type': 'application/json',
-      // 'Authorization': getToken(),
-      // 'Cookie': "Authorization=${getToken()}",
+      'Authorization': getToken(),
     };
     try {
       var response = await http.delete(Uri.http(_endpoint, path), headers: headers);
