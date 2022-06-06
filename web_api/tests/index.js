@@ -14,6 +14,18 @@ const checkUUIDValidity = (uuid) => {
     return regexExp.test(uuid)
 }
 
+const graphql = {
+    query: async (token, version, gql) => {
+        const res = await request.post(`/graphql/v${version}`).set({ 'Authorization': token }).send({
+            query: gql
+        })
+        expect(res.status).toEqual(200)
+        expect(res.body.data).toBeDefined()
+        return res.body.data
+    }
+}
+
+
 const loginAnonymous = async (username) => {
     const login_res = await request.post('/auth/anonymous').send({
         username
@@ -46,6 +58,7 @@ module.exports = {
     checkSession,
     checkUUIDValidity,
     delay,
+    graphql,
     loginAnonymous,
     logout
 }
