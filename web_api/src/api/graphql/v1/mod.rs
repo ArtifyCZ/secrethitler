@@ -1,7 +1,10 @@
 use std::{time::Duration, convert::Infallible};
+use std::fmt::{Debug, Display, Formatter};
 use std::ptr::null;
-use juniper::{RootNode, ScalarValue};
+use std::str::FromStr;
+use juniper::{RootNode, ScalarValue, Variables};
 use actix_web::{Error, HttpRequest, HttpResponse, Scope, web::{ Data, get, Payload, post }};
+use actix_web::error::HttpError;
 use futures::StreamExt;
 use juniper_graphql_ws::{ConnectionConfig, Init};
 use juniper_actix::{graphql_handler, subscriptions::subscriptions_handler};
@@ -10,6 +13,7 @@ use crate::api::graphql::v1::context::GraphQLContext;
 use crate::api::graphql::v1::mutation::Mutation;
 use crate::api::graphql::v1::subscription::Subscription;
 use crate::api::graphql::v1::query::Query;
+use crate::app::auth::session::Session;
 //use crate::api::graphql::v1::websocket::websocket_gql_endpoint;
 use crate::app::slot::slot_service::SlotService;
 use crate::app::user::user::{User, UserType};
@@ -43,31 +47,45 @@ async fn graphql_api_endpoint(
     graphql_handler(schema.get_ref(), &context, req, payload).await
 }
 
-pub struct SubscriptionConfig<CtxT: Unpin + Send + 'static>(ConnectionConfig<CtxT>);
-impl<S: ScalarValue, CtxT: Unpin + Send + 'static> Init<S, CtxT> for SubscriptionConfig<CtxT> {
-    type Error = Infallible;
-    type Future = futures::future::Ready<Result<ConnectionConfig<CtxT>, Self::Error>>;
+#[derive(Debug)]
+pub enum SubscriptionError {
+    Unauthorized
+}
 
-    fn init(self, params: juniper::Variables<S>) -> Self::Future {
-        println!("It fuckin' did it!");
-        futures::future::ok(self.0)
+impl Display for SubscriptionError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SubscriptionError::Unauthorized => write!(f, "unauthorized")
+        }
     }
 }
+impl std::error::Error for SubscriptionError {}
 
 async fn socket_gql_endpoint(
     req: HttpRequest,
     mut payload: Payload,
     schema: Data<Schema>,
     slots: Data<SlotService>,
-    // auth: Data<AuthService>
-    // user: User
+    auth: AuthService
     ) -> Result<HttpResponse, Error> {
-    // TODO: This should really be replaced.
-    let context = GraphQLContext::new(slots.get_ref().clone(), User::new(Uuid::new_v4(), UserType::Temp, "abc".to_string()));
-    let config = ConnectionConfig::new(context);
-    let config = config.with_keep_alive_interval(Duration::from_secs(15));
+    subscriptions_handler(req, payload, schema.into_inner(), move |params: Variables| {
+        let res: Result<ConnectionConfig<GraphQLContext>, SubscriptionError> = (|| {
+            let token = {
+                let param = params.get("Authorization")
+                    .ok_or(SubscriptionError::Unauthorized)?;
+                let token = param.as_string_value().ok_or(SubscriptionError::Unauthorized)?;
+                Uuid::from_str(token).map_err(|_| SubscriptionError::Unauthorized)?
+            };
+            let user: User = auth.get_session(&token)
+                .map_err(|_| SubscriptionError::Unauthorized)?.user();
 
-    subscriptions_handler(req, payload, schema.into_inner(), SubscriptionConfig(config)).await
+            let context = GraphQLContext::new(slots.get_ref().clone(), user);
+            let config = ConnectionConfig::new(context)
+                .with_keep_alive_interval(Duration::from_secs(15));
+            Ok(config)
+        })();
+        futures::future::ready(res)
+    }).await
 }
 
 async fn graphiql_route() -> Result<actix_web::HttpResponse, actix_web::Error> {
