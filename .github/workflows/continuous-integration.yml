@@ -15,6 +15,13 @@ jobs:
     - uses: actions/checkout@v2
 
 # Rust backend
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        default: true
+        profile: minimal
+
     - name: Build the backend
       working-directory: web_api
       run: cargo build --release
