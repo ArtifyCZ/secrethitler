@@ -1,32 +1,36 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:secrethitler/logger.dart';
 
-class HttpClient {
-  final String endpoint;
-  late final WebSocketChannel channel;
+final _log = getLogger('HttpClient');
 
-  String? token;
+class MyHttpClient {
+  final String _endpoint;
 
-  HttpClient(this.endpoint) {
-    // channel = WebSocketChannel.connect(
-    //   Uri.parse('wss://' + endpoint),
-    // );
-    // channel.stream.listen(
-    //   (data) {
-    //     log(data);
-    //   },
-    //   onError: (error) => log(error.toString()),
-    // );
+  String? _token;
+
+  MyHttpClient(this._endpoint);
+
+  String getToken() {
+    return _token ?? "None";
+  }
+  void setToken(String token) {
+    _token = token;
+  }
+  void clearToken() {
+    _token = null;
+  }
+  bool isAuthenticated() {
+    return _token != null;
   }
 
   Future<Map<String, dynamic>> getData(String path) async {
     final headers = {
-      'Authorization': token ?? "None",
+      'Authorization': getToken(),
     };
     try {
-      var response = await http.get(Uri.http(endpoint, path), headers: headers);
+      var response = await http.get(Uri.http(_endpoint, path), headers: headers);
       if (response.statusCode == 200) {
         try {
           return jsonDecode(response.body);
@@ -44,10 +48,10 @@ class HttpClient {
       String path, Map<String, dynamic> data) async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': token ?? "None",
+      'Authorization': getToken(),
     };
     try {
-      var response = await http.post(Uri.http(endpoint, path),
+      var response = await http.post(Uri.http(_endpoint, path),
           headers: headers, body: json.encode(data));
       if (response.statusCode == 200) {
         try {
@@ -67,10 +71,10 @@ class HttpClient {
   Future<void> deleteData(String path) async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': token ?? "None",
+      'Authorization': getToken(),
     };
     try {
-      var response = await http.delete(Uri.http(endpoint, path), headers: headers);
+      var response = await http.delete(Uri.http(_endpoint, path), headers: headers);
       if (response.statusCode != 200) {
         return Future.error(
             'Cannot DELETE /$path -> ${response.statusCode} (${response.reasonPhrase})');

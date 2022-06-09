@@ -88,6 +88,7 @@ class _SecretHitlerGamePageState extends State<SecretHitlerGamePage> {
   void initState() {
     super.initState();
 
+    GameClient.subscribeGame(widget.gameId);
 
     // GameClient.getBoard().then((json) {
     //   log("got board!");
