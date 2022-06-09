@@ -71,9 +71,9 @@ impl Slot {
             Ok(mut data) => {
                 let game = data.game.borrow_mut();
                 if let Some(game) = game {
-                    game.stop()
+                    game.stop();
+                    data.game = None;
                 }
-                data.game = None;
 
                 Err(())
             },
