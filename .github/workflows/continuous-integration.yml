@@ -31,6 +31,10 @@ jobs:
 
 
   test_backend:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
     needs: build_backend
 
     steps:
@@ -49,6 +53,10 @@ jobs:
 
 
   ci_flutter:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
     needs: build_backend
 
     steps:
