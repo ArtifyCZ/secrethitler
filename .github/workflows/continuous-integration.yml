@@ -52,7 +52,9 @@ jobs:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: secrethitler-web-api
     - name: Start the API server
-      run: secrethitler-web-api&
+      run: |
+        chmod 701 secrethitler-web-api
+        secrethitler-web-api&
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
@@ -88,7 +90,9 @@ jobs:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: secrethitler-web-api
     - name: Start the API server
-      run: secrethitler-web-api&
+      run: |
+        chmod 701 secrethitler-web-api
+        secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
