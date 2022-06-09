@@ -6,47 +6,57 @@ on:
     branches: [dev, release]
 
 jobs:
-  run_tests:
+  build_backend:
     strategy:
       matrix:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
+    defaults:
+      run:
+        working-directory: web_api
+
     steps:
     - uses: actions/checkout@v2
-
-# Rust backend
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         default: true
         profile: minimal
-
     - uses: Swatinem/rust-cache@v1
-
     - name: Build the backend
       uses: actions-rs/cargo@v1
       working-directory: web_api
       with:
         command: build
 
+
+  test_backend:
+    needs: build_backend
+
+    steps:
+    - uses: actions/checkout@v2
     - name: Start the API server
       working-directory: web_api
-      run: target/release/secrethitler-web-api&
-
+      run: target/debug/secrethitler-web-api&
     - name: Install test dependencies
       working-directory: web_api/tests
       run: npm i
-
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
+    - name: Stop the API server
+      run: killall secrethitler-web-api
 
-# Flutter frontend
+
+  ci_flutter:
+    needs: build_backend
+
+    steps:
+    - uses: actions/checkout@v2
     - uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
-
     - name: Prepare linux build
       working-directory: flutter_client
       run: |
@@ -55,18 +65,17 @@ jobs:
         flutter config --no-analytics
         flutter config --enable-linux-desktop
         flutter doctor -v
-
     - name: Get flutter dependencies
       working-directory: flutter_client
       run: flutter pub get
-
+    - name: Start the API server
+      working-directory: web_api
+      run: target/debug/secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
         export DISPLAY=:99
         sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
         flutter test -d linux integration_test
-
-# Cleanup
-    - name: Stop the server
+    - name: Stop the API server
       run: killall secrethitler-web-api
