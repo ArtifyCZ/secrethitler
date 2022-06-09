@@ -30,8 +30,8 @@ jobs:
         args: --package secrethitler-web-api
     - uses: actions/upload-artifact@v3
       with:
-        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
-        path: web_api/target/debug/secrethitler-web-api
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+        path: target/debug/secrethitler-web-api
 
 
   test_backend:
@@ -49,7 +49,7 @@ jobs:
     - uses: Swatinem/rust-cache@v1
     - uses: actions/download-artifact@v3
       with:
-        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: secrethitler-web-api
     - name: Start the API server
       run: secrethitler-web-api&
@@ -85,7 +85,7 @@ jobs:
       run: flutter pub get
     - uses: actions/download-artifact@v3
       with:
-        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: secrethitler-web-api
     - name: Start the API server
       run: secrethitler-web-api&
