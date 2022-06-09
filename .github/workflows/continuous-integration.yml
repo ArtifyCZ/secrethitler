@@ -17,8 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
+    - uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         default: true
@@ -29,6 +28,10 @@ jobs:
       with:
         command: build
         args: --package secrethitler-web-api
+    - uses: actions/upload-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
+        path: web_api/target/debug/secrethitler-web-api
 
 
   test_backend:
@@ -44,8 +47,12 @@ jobs:
       working-directory: web_api/tests
       run: npm i
     - uses: Swatinem/rust-cache@v1
+    - uses: actions/download-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
+        path: secrethitler-web-api
     - name: Start the API server
-      run: web_api/target/debug/secrethitler-web-api&
+      run: secrethitler-web-api&
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
@@ -76,9 +83,12 @@ jobs:
     - name: Get flutter dependencies
       working-directory: flutter_client
       run: flutter pub get
-    - uses: Swatinem/rust-cache@v1
+    - uses: actions/download-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('web_api/Cargo.toml', 'web_api/Cargo.lock', 'web_api/src/**')}}
+        path: secrethitler-web-api
     - name: Start the API server
-      run: web_api/target/debug/secrethitler-web-api&
+      run: secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
