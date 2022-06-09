@@ -22,12 +22,13 @@ jobs:
         default: true
         profile: minimal
 
+    - uses: Swatinem/rust-cache@v1
+
     - name: Build the backend
       working-directory: web_api
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --release
 
     - name: Start the API server
       working-directory: web_api
