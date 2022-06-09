@@ -40,12 +40,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Start the API server
-      working-directory: web_api
-      run: target/debug/secrethitler-web-api&
     - name: Install test dependencies
       working-directory: web_api/tests
       run: npm i
+    - name: Start the API server
+      run: web_api/target/debug/secrethitler-web-api&
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
@@ -77,8 +76,7 @@ jobs:
       working-directory: flutter_client
       run: flutter pub get
     - name: Start the API server
-      working-directory: web_api
-      run: target/debug/secrethitler-web-api&
+      run: web_api/target/debug/secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
