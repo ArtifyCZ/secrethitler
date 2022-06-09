@@ -24,7 +24,10 @@ jobs:
 
     - name: Build the backend
       working-directory: web_api
-      run: cargo build --release
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --release
 
     - name: Start the API server
       working-directory: web_api
