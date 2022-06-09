@@ -28,7 +28,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --package web_api
+        args: --package secrethitler-web-api
 
 
   test_backend:
