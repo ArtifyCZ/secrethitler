@@ -43,6 +43,7 @@ jobs:
     - name: Install test dependencies
       working-directory: web_api/tests
       run: npm i
+    - uses: Swatinem/rust-cache@v1
     - name: Start the API server
       run: web_api/target/debug/secrethitler-web-api&
     - name: Run backend tests
@@ -75,6 +76,7 @@ jobs:
     - name: Get flutter dependencies
       working-directory: flutter_client
       run: flutter pub get
+    - uses: Swatinem/rust-cache@v1
     - name: Start the API server
       run: web_api/target/debug/secrethitler-web-api&
     - name: Build and test the flutter frontend client
