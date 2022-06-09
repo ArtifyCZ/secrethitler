@@ -1,7 +1,10 @@
 name: Secret Hitler CI
 on:
+  push:
+    branches: [dev, release]
   pull_request:
     branches: [dev, release]
+
 jobs:
   run_tests:
     strategy:
