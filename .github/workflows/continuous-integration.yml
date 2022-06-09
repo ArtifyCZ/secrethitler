@@ -26,7 +26,6 @@ jobs:
     - uses: Swatinem/rust-cache@v1
     - name: Build the backend
       uses: actions-rs/cargo@v1
-      working-directory: web_api
       with:
         command: build
 
