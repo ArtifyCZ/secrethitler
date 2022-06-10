@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-use std::sync::{Arc, LockResult, RwLock};
+use std::{collections::HashMap, sync::{Arc, RwLock}};
 use uuid::Uuid;
 use crate::app::user::user::{User, UserType};
 
@@ -39,7 +38,7 @@ impl UserService {
 
                 let user = User::new(uuid.clone(), u_type, username.clone());
 
-                if let Some(uuid) = data.usernames.insert(username, uuid.clone()) {
+                if let Some(_uuid) = data.usernames.insert(username, uuid.clone()) {
                     return Err(()); // An user with the username exists.
                 }
 

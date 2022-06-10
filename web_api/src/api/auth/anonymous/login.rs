@@ -1,8 +1,6 @@
-use actix_web::{Error, HttpResponse, Responder, web};
-use actix_web::body::BoxBody;
+use actix_web::{HttpResponse, web};
 use crate::AuthService;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
 pub struct LoginAnonymousReqModel {

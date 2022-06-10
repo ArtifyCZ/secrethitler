@@ -1,12 +1,11 @@
-use crate::app::game::player::Player;
-use crate::app::user::user::User;
+use crate::app::{game::player::Player, user::user::User};
 
 pub struct Game {
     players: Vec<Player>
 }
 
 impl Game {
-    //TODO: Implement error handling.
+    ///TODO: Implement error handling.
     pub fn new(players: &Vec<User>) -> Result<Self, ()> {
         match players.iter().count() {
             5..=10 => {
@@ -18,7 +17,7 @@ impl Game {
         }
     }
 
-    pub fn stop(&self) {
-        todo!("Implement game stopping.")
+    ///TODO: Implement game stopping.
+    pub fn stop(&mut self) {
     }
 }

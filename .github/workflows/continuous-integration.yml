@@ -14,7 +14,6 @@ jobs:
     defaults:
       run:
         working-directory: web_api
-
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
@@ -27,11 +26,11 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --package secrethitler-web-api
+        args: --release --package secrethitler-web-api
     - uses: actions/upload-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
-        path: target/debug/secrethitler-web-api
+        path: target/release/secrethitler-web-api
 
 
   test_backend:
@@ -40,7 +39,6 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
     needs: build_backend
-
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v3
@@ -72,7 +70,6 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
     needs: build_backend
-
     steps:
     - uses: actions/checkout@v2
     - uses: subosito/flutter-action@v2

@@ -1,48 +1,27 @@
-use std::{time::Duration, convert::Infallible};
-use std::fmt::{Debug, Display, Formatter};
-use std::ptr::null;
-use std::str::FromStr;
-use juniper::{RootNode, ScalarValue, Variables};
-use actix_web::{Error, HttpRequest, HttpResponse, Scope, web::{ Data, get, Payload, post }};
-use actix_web::error::HttpError;
-use futures::StreamExt;
-use juniper_graphql_ws::{ConnectionConfig, Init};
+use std::{time::Duration, fmt::{Debug, Display, Formatter}, str::FromStr};
+use juniper::{RootNode, Variables};
+use actix_web::{Error, HttpRequest, HttpResponse, Scope,
+                web::{ Data, get, Payload, post }};
+use juniper_graphql_ws::ConnectionConfig;
 use juniper_actix::{graphql_handler, subscriptions::subscriptions_handler};
 use uuid::Uuid;
-use crate::api::graphql::v1::context::GraphQLContext;
-use crate::api::graphql::v1::mutation::Mutation;
-use crate::api::graphql::v1::subscription::Subscription;
-use crate::api::graphql::v1::query::Query;
-use crate::app::auth::session::Session;
-//use crate::api::graphql::v1::websocket::websocket_gql_endpoint;
-use crate::app::slot::slot_service::SlotService;
-use crate::app::user::user::{User, UserType};
-use crate::AuthService;
+use crate::{AuthService, api::graphql::v1::{context::GraphQLContext, mutation::Mutation,
+                                            subscription::Subscription, query::Query},
+    app::{slot::slot_service::SlotService, user::user::User}};
 
 mod query;
 mod object;
 mod context;
 mod mutation;
 mod subscription;
-mod websocket;
 
 pub type Schema = RootNode<'static, Query, Mutation, Subscription>;
-
 pub fn schema() -> Schema {
-    Schema::new(
-        Query,
-        Mutation,
-        Subscription
-    )
+    Schema::new(Query, Mutation, Subscription)
 }
 
-async fn graphql_api_endpoint(
-    req: HttpRequest,
-    payload: Payload,
-    schema: Data<Schema>,
-    slots: Data<SlotService>,
-    user: User
-) -> Result<HttpResponse, Error> {
+async fn graphql_api_endpoint(req: HttpRequest, payload: Payload, schema: Data<Schema>,
+    slots: Data<SlotService>, user: User) -> Result<HttpResponse, Error> {
     let context = GraphQLContext::new(slots.get_ref().clone(), user);
     graphql_handler(schema.get_ref(), &context, req, payload).await
 }
@@ -51,7 +30,6 @@ async fn graphql_api_endpoint(
 pub enum SubscriptionError {
     Unauthorized
 }
-
 impl Display for SubscriptionError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -61,14 +39,10 @@ impl Display for SubscriptionError {
 }
 impl std::error::Error for SubscriptionError {}
 
-async fn socket_gql_endpoint(
-    req: HttpRequest,
-    mut payload: Payload,
-    schema: Data<Schema>,
-    slots: Data<SlotService>,
-    auth: AuthService
-    ) -> Result<HttpResponse, Error> {
-    subscriptions_handler(req, payload, schema.into_inner(), move |params: Variables| {
+async fn socket_gql_endpoint(req: HttpRequest, payload: Payload, schema: Data<Schema>,
+                             slots: Data<SlotService>, auth: AuthService) -> Result<HttpResponse, Error> {
+    subscriptions_handler(req, payload, schema.into_inner(),
+                          move |params: Variables| {
         let res: Result<ConnectionConfig<GraphQLContext>, SubscriptionError> = (|| {
             let token = {
                 let param = params.get("Authorization")
@@ -104,5 +78,4 @@ pub fn graphql_api_scope_v1(scope: Scope) -> Scope {
         .route("graphiql", get().to(graphiql_route))
         .route("playground", get().to(playground_route))
         .route("websocket", get().to(socket_gql_endpoint))
-        // .route("websocket", get().to(websocket_gql_endpoint))
 }
