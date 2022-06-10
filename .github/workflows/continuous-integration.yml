@@ -43,14 +43,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install test dependencies
-      working-directory: web_api/tests
-      run: npm i
     - uses: actions/setup-node@v3
       with:
         node-version: 14
         cache: 'npm'
         cache-dependency-path: web_api/tests/package-lock.json
+    - name: Install test dependencies
+      working-directory: web_api/tests
+      run: npm i
     - uses: Swatinem/rust-cache@v1
     - uses: actions/download-artifact@v3
       with:
