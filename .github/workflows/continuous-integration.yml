@@ -1,38 +1,83 @@
 name: Secret Hitler CI
 on:
+  push:
+    branches: [dev, release]
   pull_request:
     branches: [dev, release]
+
 jobs:
-  run_tests:
+  build_backend:
     strategy:
       matrix:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
+    defaults:
+      run:
+        working-directory: web_api
+
     steps:
     - uses: actions/checkout@v2
-
-# Rust backend
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        default: true
+        profile: minimal
+    - uses: Swatinem/rust-cache@v1
     - name: Build the backend
-      working-directory: web_api
-      run: cargo build --release
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --package secrethitler-web-api
+    - uses: actions/upload-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+        path: target/debug/secrethitler-web-api
 
-    - name: Start the API server
-      working-directory: web_api
-      run: target/release/secrethitler-web-api&
 
+  test_backend:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    needs: build_backend
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: 'npm'
+        cache-dependency-path: web_api/tests/package-lock.json
     - name: Install test dependencies
       working-directory: web_api/tests
       run: npm i
-
+    - uses: Swatinem/rust-cache@v1
+    - uses: actions/download-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+    - name: Start the API server
+      run: |
+        chmod 701 secrethitler-web-api
+        ./secrethitler-web-api&
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
+    - name: Stop the API server
+      run: killall secrethitler-web-api
 
-# Flutter frontend
+
+  ci_flutter:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    needs: build_backend
+
+    steps:
+    - uses: actions/checkout@v2
     - uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
-
     - name: Prepare linux build
       working-directory: flutter_client
       run: |
@@ -41,18 +86,21 @@ jobs:
         flutter config --no-analytics
         flutter config --enable-linux-desktop
         flutter doctor -v
-
     - name: Get flutter dependencies
       working-directory: flutter_client
       run: flutter pub get
-
+    - uses: actions/download-artifact@v3
+      with:
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+    - name: Start the API server
+      run: |
+        chmod 701 secrethitler-web-api
+        ./secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
         export DISPLAY=:99
         sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
         flutter test -d linux integration_test
-
-# Cleanup
-    - name: Stop the server
+    - name: Stop the API server
       run: killall secrethitler-web-api
