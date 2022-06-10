@@ -50,7 +50,6 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
-        path: secrethitler-web-api
     - name: Start the API server
       run: |
         chmod 701 secrethitler-web-api
@@ -88,7 +87,6 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
-        path: secrethitler-web-api
     - name: Start the API server
       run: |
         chmod 701 secrethitler-web-api
