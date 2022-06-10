@@ -50,6 +50,7 @@ jobs:
       with:
         node-version: 14
         cache: 'npm'
+        cache-dependency-path: web_api/tests/package-lock.json
     - uses: Swatinem/rust-cache@v1
     - uses: actions/download-artifact@v3
       with:
