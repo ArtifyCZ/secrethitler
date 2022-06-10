@@ -54,7 +54,7 @@ jobs:
     - name: Start the API server
       run: |
         chmod 701 secrethitler-web-api
-        secrethitler-web-api&
+        ./secrethitler-web-api&
     - name: Run backend tests
       working-directory: web_api/tests
       run: npm t
@@ -92,7 +92,7 @@ jobs:
     - name: Start the API server
       run: |
         chmod 701 secrethitler-web-api
-        secrethitler-web-api&
+        ./secrethitler-web-api&
     - name: Build and test the flutter frontend client
       working-directory: flutter_client
       run: |
