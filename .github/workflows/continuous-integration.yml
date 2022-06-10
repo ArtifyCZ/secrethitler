@@ -27,7 +27,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --package secrethitler-web-api
+        args: --release --package secrethitler-web-api
     - uses: actions/upload-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
