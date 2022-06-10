@@ -3,33 +3,77 @@ import '../game/common.dart';
 import 'http_client.dart';
 import 'package:graphql/client.dart';
 
-
 class GameClient {
   static final log = getLogger('GameClient');
 
-  static late final HttpClient _client;
+  static late final MyHttpClient _client;
   static late final GraphQLClient _graphQLClient;
+  static late String _endpoint;
   static String? _playerId;
 
   static void init(String endpoint) {
-    log.i("Using API at $endpoint");
-    _client = HttpClient(endpoint);
+    _endpoint = endpoint;
 
-    final _httpLink = HttpLink('http://$endpoint/graphql/v1');
+    log.i("Using API at $_endpoint");
+    _client = MyHttpClient(_endpoint);
+  }
+
+  static void initGraphQL() {
+    final _httpLink = HttpLink(
+      'http://$_endpoint/graphql/v1',
+    );
 
     final _authLink = AuthLink(
+      headerKey: 'Authorization',
       getToken: () {
-        return _client.token;
-      }
+        return _client.getToken();
+      },
     );
 
     Link _link = _authLink.concat(_httpLink);
 
+    /// subscriptions must be split otherwise `HttpLink` will swallow them
+    log.d("Creating websocket link");
+
+    final Link _wsLink = WebSocketLink(
+      'ws://$_endpoint/graphql/v1/websocket',
+      config: SocketClientConfig(
+        initialPayload: {
+          "Authorization": _client.getToken(),
+        }
+      ),
+    );
+    _link = Link.split((request) => request.isSubscription, _wsLink, _link);
+
     _graphQLClient = GraphQLClient(
-      /// **NOTE** The default store is the InMemoryStore, which does NOT persist to disk
       cache: GraphQLCache(),
       link: _link,
     );
+  }
+
+  static void subscribeGame(String uuid) {
+    final subscriptionDocument = gql(
+      r'''
+        subscription Game($uuid: String!){
+          game(uuid: $uuid) {
+            hello
+          }
+        }
+      ''',
+    );
+    var subscription = _graphQLClient.subscribe(
+      SubscriptionOptions(
+        document: subscriptionDocument,
+        variables: {
+          'uuid': uuid,
+        }
+      ),
+    );
+    subscription.listen(onGameSubscription);
+  }
+
+  static void onGameSubscription(QueryResult result) {
+    log.w("Game: ${result.data}");
   }
 
   static Future<Map<String, dynamic>> getBoard() async {
@@ -80,7 +124,6 @@ class GameClient {
     _client.postData('chat', data);
   }
 
-
   static Future<String?> createGame() async {
     const String createSlot = r'''
       mutation CreateSlot($nPlayers: Int!) {
@@ -94,7 +137,7 @@ class GameClient {
 
     final QueryOptions options = QueryOptions(
       document: gql(createSlot),
-      variables: <String, dynamic>{
+      variables: {
         'nPlayers': nPlayers,
       },
     );
@@ -124,14 +167,15 @@ class GameClient {
     return _client.postData('auth/anonymous', data).then((value) async {
       if (value == null) return false;
 
-      _client.token = value['token'];
+      _client.setToken(value['token']);
       _playerId = value['id'];
-      log.i("Received id '$_playerId' and token '${_client.token}' ");
+      log.i("Received id '$_playerId' and token '${_client.getToken()}' ");
 
       return _client.getData('auth').then((value) {
         String id = value['id'];
         if (id == _playerId) {
           log.i("Session check successful");
+          initGraphQL();
           return true;
         } else {
           log.e("Session check failed: ids don't match '$_playerId' vs '$id'");
@@ -150,13 +194,13 @@ class GameClient {
   static void logout() async {
     await _client.deleteData('auth').then((value) {
       log.i('Logged out');
-      _client.token = null;
+      _client.clearToken();
     }, onError: (error) {
       log.e("Log out failed: $error");
     });
   }
 
-  static bool isAuthenticated () {
-    return _client.token != null;
+  static bool isAuthenticated() {
+    return _client.isAuthenticated();
   }
 }
