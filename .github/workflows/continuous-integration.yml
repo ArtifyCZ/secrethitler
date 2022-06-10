@@ -46,6 +46,10 @@ jobs:
     - name: Install test dependencies
       working-directory: web_api/tests
       run: npm i
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: 'npm'
     - uses: Swatinem/rust-cache@v1
     - uses: actions/download-artifact@v3
       with:
