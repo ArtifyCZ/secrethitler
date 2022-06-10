@@ -1,4 +1,3 @@
-use std::borrow::BorrowMut;
 use std::sync::{Arc, RwLock};
 use uuid::Uuid;
 use crate::app::{game::game::Game, user::user::User};
@@ -57,6 +56,10 @@ impl Slot {
                     return Err(());
                 }
 
+                if let Some(game) = &mut data.game {
+                    game.stop();
+                }
+
                 let game = Game::new(&data.players)?;
                 data.game = Some(game);
                 Ok(())
@@ -69,8 +72,7 @@ impl Slot {
     pub fn stop_game(&self) -> Result<(), ()> {
         match self.data.write() {
             Ok(mut data) => {
-                let game = data.game.borrow_mut();
-                if let Some(game) = game {
+                if let Some(game) = &mut data.game {
                     game.stop();
                     data.game = None;
                 }
