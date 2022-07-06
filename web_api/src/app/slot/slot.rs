@@ -1,7 +1,6 @@
-use std::sync::{Arc, LockResult, RwLock};
+use std::sync::{Arc, RwLock};
 use uuid::Uuid;
-use crate::app::game::game::Game;
-use crate::app::user::user::User;
+use crate::app::{game::game::Game, user::user::User};
 
 #[derive(Clone)]
 pub struct Slot {
@@ -57,6 +56,10 @@ impl Slot {
                     return Err(());
                 }
 
+                if let Some(game) = &mut data.game {
+                    game.stop();
+                }
+
                 let game = Game::new(&data.players)?;
                 data.game = Some(game);
                 Ok(())
@@ -69,8 +72,9 @@ impl Slot {
     pub fn stop_game(&self) -> Result<(), ()> {
         match self.data.write() {
             Ok(mut data) => {
-                if let Some(game) = &data.game {
-                    game.stop()
+                if let Some(game) = &mut data.game {
+                    game.stop();
+                    data.game = None;
                 }
 
                 Err(())
@@ -93,5 +97,15 @@ impl Slot {
             },
             Err(_) => Err(())
         }
+    }
+
+    //TODO: Implement error handling.
+    pub fn players(&self) -> Result<Vec<User>, ()> {
+        self.data.read().map_err(|_| ()).map(|data| data.players.clone())
+    }
+
+    //TODO: Implement error handling.
+    pub fn admin(&self) -> Result<User, ()> {
+        self.data.read().map_err(|_| ()).map(|data| data.admin.clone())
     }
 }

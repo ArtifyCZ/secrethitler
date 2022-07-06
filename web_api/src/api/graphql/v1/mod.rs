@@ -1,43 +1,73 @@
-use actix_web::{Error, HttpRequest, web};
-use actix_web::HttpResponse;
-use actix_web::Scope;
-use actix_web::web::{Data, get, Payload, post, resource};
-use juniper::{graphql_object, EmptyMutation, EmptySubscription, GraphQLObject, RootNode};
-use juniper_actix::graphql_handler;
-use crate::api::graphql::v1::context::GraphQLContext;
-use crate::api::graphql::v1::mutation::Mutation;
-use crate::api::graphql::v1::query::Query;
-use crate::app::slot::slot_service::SlotService;
-use crate::app::user::user::User;
+use std::{time::Duration, fmt::{Debug, Display, Formatter}, str::FromStr};
+use juniper::{RootNode, Variables};
+use actix_web::{Error, HttpRequest, HttpResponse, Scope,
+                web::{ Data, get, Payload, post }};
+use juniper_graphql_ws::ConnectionConfig;
+use juniper_actix::{graphql_handler, subscriptions::subscriptions_handler};
+use uuid::Uuid;
+use crate::{AuthService, api::graphql::v1::{context::GraphQLContext, mutation::Mutation,
+                                            subscription::Subscription, query::Query},
+    app::{slot::slot_service::SlotService, user::user::User}};
 
 mod query;
 mod object;
 mod context;
 mod mutation;
+mod subscription;
 
-pub type Schema = RootNode<'static, Query, Mutation, EmptySubscription<GraphQLContext>>;
-
+pub type Schema = RootNode<'static, Query, Mutation, Subscription>;
 pub fn schema() -> Schema {
-    Schema::new(
-        Query,
-        Mutation,
-        EmptySubscription::<GraphQLContext>::new()
-    )
+    Schema::new(Query, Mutation, Subscription)
 }
 
-async fn graphql_api_endpoint(
-    req: HttpRequest,
-    payload: Payload,
-    schema: Data<Schema>,
-    slots: Data<SlotService>,
-    user: User
-) -> Result<HttpResponse, Error> {
+async fn graphql_api_endpoint(req: HttpRequest, payload: Payload, schema: Data<Schema>,
+    slots: Data<SlotService>, user: User) -> Result<HttpResponse, Error> {
     let context = GraphQLContext::new(slots.get_ref().clone(), user);
-    graphql_handler(&schema, &context, req, payload).await
+    graphql_handler(schema.get_ref(), &context, req, payload).await
+}
+
+#[derive(Debug)]
+pub enum SubscriptionError {
+    Unauthorized
+}
+impl Display for SubscriptionError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SubscriptionError::Unauthorized => write!(f, "unauthorized")
+        }
+    }
+}
+impl std::error::Error for SubscriptionError {}
+
+async fn socket_gql_endpoint(req: HttpRequest, payload: Payload, schema: Data<Schema>,
+                             slots: Data<SlotService>, auth: AuthService) -> Result<HttpResponse, Error> {
+    subscriptions_handler(req, payload, schema.into_inner(),
+                          move |params: Variables| {
+        let res: Result<ConnectionConfig<GraphQLContext>, SubscriptionError> = (|| {
+            let token = {
+                let param = params.get("Authorization")
+                    .ok_or(SubscriptionError::Unauthorized)?;
+                let token = param.as_string_value().ok_or(SubscriptionError::Unauthorized)?;
+                Uuid::from_str(token).map_err(|_| SubscriptionError::Unauthorized)?
+            };
+            let user: User = auth.get_session(&token)
+                .map_err(|_| SubscriptionError::Unauthorized)?.user();
+
+            let context = GraphQLContext::new(slots.get_ref().clone(), user);
+            let config = ConnectionConfig::new(context)
+                .with_keep_alive_interval(Duration::from_secs(15));
+            Ok(config)
+        })();
+        futures::future::ready(res)
+    }).await
 }
 
 async fn graphiql_route() -> Result<actix_web::HttpResponse, actix_web::Error> {
-    juniper_actix::graphiql_handler("/graphql/v1", None).await
+    juniper_actix::graphiql_handler("/graphql/v1", Some("/graphql/v1/websocket")).await
+}
+
+async fn playground_route() -> Result<actix_web::HttpResponse, actix_web::Error> {
+    juniper_actix::playground_handler("/graphql/v1", Some("/graphql/v1/websocket")).await
 }
 
 pub fn graphql_api_scope_v1(scope: Scope) -> Scope {
@@ -46,4 +76,6 @@ pub fn graphql_api_scope_v1(scope: Scope) -> Scope {
         .route("", get().to(graphql_api_endpoint))
         .route("", post().to(graphql_api_endpoint))
         .route("graphiql", get().to(graphiql_route))
+        .route("playground", get().to(playground_route))
+        .route("websocket", get().to(socket_gql_endpoint))
 }

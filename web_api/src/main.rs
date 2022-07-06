@@ -1,25 +1,12 @@
-use actix_web::{Error, Scope, test, web};
-use actix_web::test::init_service;
-use actix_web::web::Data;
-use {
-    actix_web::{
-        App,
-        HttpServer
-    },
-    std::env
-};
-use crate::app::auth::auth_service::AuthService;
-use crate::app::slot::slot_service;
-use crate::app::user::user_service::UserService;
-
-mod middleware;
-mod infrastructure;
-mod app;
-mod api;
-mod core;
-
+use actix_web::{web::{self, Data}, App, HttpServer};
+use std::env;
+use crate::app::{auth::auth_service::AuthService, slot::slot_service::SlotService,
+                 user::user_service::UserService};
 use crate::middleware::auth_middleware::AuthMiddlewareFactory;
-use crate::slot_service::SlotService;
+
+mod api;
+mod app;
+mod middleware;
 
 fn extract_args(args: Vec<String>) -> (String, u16) {
     let address = args.get(1).cloned().unwrap_or("0.0.0.0".to_string());

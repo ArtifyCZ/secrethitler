@@ -1,12 +1,13 @@
-use juniper::{graphql_object, GraphQLObject};
+use juniper::graphql_object;
 use uuid::Uuid;
 use crate::api::graphql::v1::context::GraphQLContext;
+use crate::api::graphql::v1::object::player::Player;
 
 pub struct Slot {
     uuid: Uuid,
     in_game: bool,
-    //TODO: admin: Player
-    //TODO: players: Vec<Player>
+    admin: Player,
+    players: Vec<Player>
 }
 
 impl Slot {
@@ -14,7 +15,9 @@ impl Slot {
         Ok(
             Self {
                 uuid: slot.uuid()?,
-                in_game: slot.in_game()?
+                in_game: slot.in_game()?,
+                admin: Player::from_user(&slot.admin()?),
+                players: slot.players()?.iter().map(|p| Player::from_user(p)).collect()
             }
         )
     }
@@ -30,7 +33,11 @@ impl Slot {
         self.in_game
     }
 
-    //TODO: fn admin(&self) -> Player
+    fn admin(&self) -> Player {
+        self.admin.clone()
+    }
 
-    //TODO: fn players(&self) -> Vec<Player>
+    fn players(&self) -> Vec<Player> {
+        self.players.clone()
+    }
 }

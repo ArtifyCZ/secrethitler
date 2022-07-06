@@ -1,11 +1,8 @@
-use std::str::FromStr;
-use std::sync::Arc;
-use actix_web::{Error, FromRequest, HttpMessage, HttpRequest};
-use actix_web::dev::Payload;
-use futures::future::{ok, ready};
+use std::{sync::Arc};
+use actix_web::{FromRequest, HttpRequest, dev::Payload};
+use futures::future::ready;
 use uuid::Uuid;
-use crate::app::auth::session::{Session, session_from_req};
-use crate::AuthService;
+use crate::{app::auth::session::{session_from_req}};
 
 #[derive(Clone)]
 pub struct User {
@@ -47,12 +44,18 @@ impl User {
     }
 }
 
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.data.uuid == other.data.uuid
+    }
+}
+
 impl FromRequest for User {
     type Error = actix_web::error::Error;
     type Future = futures::future::Ready<Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
-        ready(match session_from_req(req, payload) {
+        ready(match session_from_req(req) {
             Ok(session) => Ok(session.user()),
             Err(err) => Err(err)
         })

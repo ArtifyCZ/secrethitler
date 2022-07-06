@@ -1,15 +1,79 @@
-import 'dart:developer';
+import 'package:secrethitler/logger.dart';
 import '../game/common.dart';
 import 'http_client.dart';
+import 'package:graphql/client.dart';
 
 class GameClient {
-  static late final HttpClient _client;
-  static String _token = "";
-  static String _playerId = "";
-  static bool _authenticated = false;
+  static final log = getLogger('GameClient');
+
+  static late final MyHttpClient _client;
+  static late final GraphQLClient _graphQLClient;
+  static late String _endpoint;
+  static String? _playerId;
 
   static void init(String endpoint) {
-    _client = HttpClient(endpoint);
+    _endpoint = endpoint;
+
+    log.i("Using API at $_endpoint");
+    _client = MyHttpClient(_endpoint);
+  }
+
+  static void initGraphQL() {
+    final _httpLink = HttpLink(
+      'http://$_endpoint/graphql/v1',
+    );
+
+    final _authLink = AuthLink(
+      headerKey: 'Authorization',
+      getToken: () {
+        return _client.getToken();
+      },
+    );
+
+    Link _link = _authLink.concat(_httpLink);
+
+    /// subscriptions must be split otherwise `HttpLink` will swallow them
+    log.d("Creating websocket link");
+
+    final Link _wsLink = WebSocketLink(
+      'ws://$_endpoint/graphql/v1/websocket',
+      config: SocketClientConfig(
+        initialPayload: {
+          "Authorization": _client.getToken(),
+        }
+      ),
+    );
+    _link = Link.split((request) => request.isSubscription, _wsLink, _link);
+
+    _graphQLClient = GraphQLClient(
+      cache: GraphQLCache(),
+      link: _link,
+    );
+  }
+
+  static void subscribeGame(String uuid) {
+    final subscriptionDocument = gql(
+      r'''
+        subscription Game($uuid: String!){
+          game(uuid: $uuid) {
+            hello
+          }
+        }
+      ''',
+    );
+    var subscription = _graphQLClient.subscribe(
+      SubscriptionOptions(
+        document: subscriptionDocument,
+        variables: {
+          'uuid': uuid,
+        }
+      ),
+    );
+    subscription.listen(onGameSubscription);
+  }
+
+  static void onGameSubscription(QueryResult result) {
+    log.w("Game: ${result.data}");
   }
 
   static Future<Map<String, dynamic>> getBoard() async {
@@ -21,7 +85,8 @@ class GameClient {
       'vote': vote.toString(),
     };
     _client.postData('vote', data).onError((error, stackTrace) {
-      log("Error while voting: ${error.toString()}");
+      log.e("Error while voting: ${error.toString()}");
+      return null;
     });
   }
 
@@ -30,7 +95,8 @@ class GameClient {
       'discardPolicy': index,
     };
     _client.postData('discardPolicy', data).onError((error, stackTrace) {
-      log("Error while discarding policy: ${error.toString()}");
+      log.e("Error while discarding policy: ${error.toString()}");
+      return null;
     });
   }
 
@@ -39,7 +105,8 @@ class GameClient {
       'chancellor': index,
     };
     _client.postData('chooseChancellor', data).onError((error, stackTrace) {
-      log("Cannot choose chancellor: ${error.toString()}");
+      log.e("Cannot choose chancellor: ${error.toString()}");
+      return null;
     });
   }
 
@@ -57,59 +124,83 @@ class GameClient {
     _client.postData('chat', data);
   }
 
-  // Authentication:
+  static Future<String?> createGame() async {
+    const String createSlot = r'''
+      mutation CreateSlot($nPlayers: Int!) {
+        createSlot(players: $nPlayers) {
+          uuid
+        } 
+      }
+    ''';
 
+    int nPlayers = 5;
+
+    final QueryOptions options = QueryOptions(
+      document: gql(createSlot),
+      variables: {
+        'nPlayers': nPlayers,
+      },
+    );
+
+    final QueryResult result = await _graphQLClient.query(options);
+
+    if (result.hasException) {
+      log.e(result.exception.toString());
+      return null;
+    }
+
+    String uuid = result.data?['createSlot']['uuid'] as String;
+
+    log.i("UUID of the new slot: '$uuid'");
+
+    return uuid;
+  }
+
+  // Authentication:
   static Future<bool> anonymousLogin(String username) async {
-    if (_authenticated) return false;
+    if (isAuthenticated()) return false;
 
     var data = {
       'username': username,
     };
 
     return _client.postData('auth/anonymous', data).then((value) async {
-      _token = value!['token'];
+      if (value == null) return false;
+
+      _client.setToken(value['token']);
       _playerId = value['id'];
-      _authenticated = true;
-      log("Received id '$_playerId' and token '$_token' ");
+      log.i("Received id '$_playerId' and token '${_client.getToken()}' ");
 
-      data = {
-        'token': _token,
-      };
-
-      return _client.postData('auth/checksession', data).then((value) {
-        String id = value!['id'];
+      return _client.getData('auth').then((value) {
+        String id = value['id'];
         if (id == _playerId) {
-          log("Session check successful");
+          log.i("Session check successful");
+          initGraphQL();
           return true;
         } else {
-          log("Session check failed - ids don't match '$_playerId' vs '$id'");
+          log.e("Session check failed: ids don't match '$_playerId' vs '$id'");
           return false;
         }
       }, onError: (error) {
-        log("Session check failed: $error");
+        log.e("Session check failed: $error");
         return false;
       });
-
     }, onError: (error) {
-      log("Login failed: $error");
+      log.e("Login failed: $error");
       return false;
     });
-
   }
 
   static void logout() async {
-    final data = {
-      'token': _token,
-    };
-
-    await _client.deleteData('auth/anonymous', data).then((value) {
-      log('Logged out');
-      _token = "";
-      _playerId = "";
-      _authenticated = false;
+    await _client.deleteData('auth').then((value) {
+      log.i('Logged out');
+      _client.clearToken();
     }, onError: (error) {
-      log("Log out failed: $error");
+      log.e("Log out failed: $error");
     });
+  }
 
+  static bool isAuthenticated() {
+    return _client.isAuthenticated();
   }
 }

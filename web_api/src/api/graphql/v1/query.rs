@@ -1,16 +1,11 @@
 use std::str::FromStr;
-use juniper::{FieldError, FieldResult, graphql_object, graphql_value, GraphQLObject, Value};
+use juniper::{FieldError, FieldResult, graphql_object, graphql_value};
 use uuid::Uuid;
-use crate::api::graphql::v1::context::GraphQLContext;
-use crate::api::graphql::v1::object::slot::Slot;
+use crate::api::graphql::v1::{context::GraphQLContext, object::slot::Slot};
 
 pub struct Query;
 #[graphql_object(context = GraphQLContext)]
 impl Query {
-    fn hello(&self) -> &'static str {
-        "Hello world!"
-    }
-
     fn find_slot(&self, context: &GraphQLContext, uuid: String) -> FieldResult<Slot> {
         if let Ok(uuid) = Uuid::from_str(uuid.as_str()) {
             if let Ok(slot) = context.slots.find(&uuid) {
