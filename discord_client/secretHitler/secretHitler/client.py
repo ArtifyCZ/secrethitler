@@ -78,6 +78,18 @@ class SecretHitler:
         return self.players[-1]
 
     def createSlot(self, player):
+        """Creates new slot for games.
+
+        Parameters
+        ----------
+        player: `Player`
+            Admin of slot
+
+        Returns
+        -------
+        
+
+        """
         query = """
             mutation{
                 createSlot(players: 5){
@@ -95,6 +107,21 @@ class SecretHitler:
 
 
 class Player:
+    """Player class for Secret Hitler.
+
+    Used to handel players.
+
+    Parameters
+    ----------
+    secretHitler: `SecretHitler`
+        Game handeler
+    id_: `str`
+        Id of player
+    username: `str`
+        Player username
+    token: `str`
+        Player API token
+    """
     def __init__(
         self,
         secretHitler: SecretHitler,
@@ -113,23 +140,59 @@ class Player:
         self.gqlClient = gql.Client(transport=self.transport)
 
     def request(self, method: str | bytes, url: str, **kwargs):
+        """Function for API calls to web API.
+
+        Parameters
+        ----------
+        method: `Union[str, bytes]`
+            HTTP method
+        url: `str`
+            API endpoint
+        **kwargs
+            Request options
+        """
         kwargs["headers"] = kwargs.setdefault("headers", {})
         kwargs["headers"]["Authorization"] = self.token
         return self.secretHitler.request(method, url, **kwargs)
 
     def query(self, query: str):
+        """Function to execute GrahphQL queries to web API.
+
+        Parameters
+        ----------
+        query: `str`
+            GraphQL query
+
+        """
         q = gql.gql(query)
         return self.gqlClient.execute(q)
 
     def delete(self):
+        """Function to delete (unregister) player from web API.
+        """
         r = self.request("DELETE", "auth", json={"token": self.id})
         print(r.status_code, r.text, r.url)
 
     def createSlot(self):
+        """Function to create game slot with self as admin.
+        """
         return self.secretHitler.createSlot(self)
 
     @classmethod
     def fromJson(cls, secretHitler: SecretHitler, jsonData: dict[str, str]):
+        """Classmethod to construct `Player` from json response.
+
+        Parameters
+        ----------
+        secretHitler: `SecretHitler`
+            Game handeler
+        jsonData: `dict[str, str]`
+            JSON data from API response
+
+        Returns
+        -------
+        `Player`
+        """
         return cls(
             secretHitler,
             jsonData["id"],
