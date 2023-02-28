@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = { version = "1.0", features = ["backtrace"] }
 axum ={ version = "0.6", features = ["json", "macros", "tokio", "ws"] }
 uuid = { version = "1.0", features = ["v4"] }
 serde = { version = "1.0", features = ["derive"] }
