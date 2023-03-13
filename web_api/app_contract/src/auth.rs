@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use sea_orm::{DbErr, TransactionError};
+use sea_orm::{DatabaseConnection, DbErr, TransactionError};
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -30,7 +30,7 @@ impl From<TransactionError<DbErr>> for CreateAnonymousAccountError {
 }
 
 #[async_trait]
-pub trait AuthService {
+pub trait AuthService<'a>: From<&'a DatabaseConnection> {
     async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                           -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
 }

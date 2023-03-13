@@ -8,8 +8,16 @@ pub struct AuthServiceImpl<'a> {
     database: &'a DatabaseConnection,
 }
 
+impl<'a> From<&'a DatabaseConnection> for AuthServiceImpl<'a> {
+    fn from(database: &'a DatabaseConnection) -> Self {
+        Self {
+            database,
+        }
+    }
+}
+
 #[async_trait]
-impl<'a> AuthService for AuthServiceImpl<'a> {
+impl<'a> AuthService<'a> for AuthServiceImpl<'a> {
     async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                 -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
         let CreateAnonymousAccountInputDto { username } = input;
