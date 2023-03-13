@@ -1,4 +1,3 @@
-use anyhow::bail;
 use uuid::Uuid;
 use sea_orm::*;
 use ::entity::{account, auth_token};
@@ -10,14 +9,14 @@ pub struct AuthService<'a> {
 
 impl<'a> AuthService<'a> {
     pub async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
-                                              -> anyhow::Result<CreateAnonymousAccountOutputDto> {
+                      -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
         let CreateAnonymousAccountInputDto { username } = input;
 
         if account::Entity::find()
             .filter(account::Column::Username.eq(&username))
             .limit(1)
             .count(self.database).await? > 0 {
-            bail!("Username `{}` already in use.", username);
+            return Err(CreateAnonymousAccountError::UsernameAlreadyInUse(username));
         }
 
         let id = Uuid::new_v4();
