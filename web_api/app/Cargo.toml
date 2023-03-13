@@ -7,3 +7,4 @@ edition = "2021"
 entity = { path = "../entity" }
 
 anyhow = { version = "1.0", features = ["backtrace"] }
+sea-orm = { version = "0.11", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "with-uuid" ] }
