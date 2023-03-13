@@ -84,7 +84,6 @@ dependencies = [
 name = "app_contract"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "async-trait",
  "thiserror",
  "uuid",
