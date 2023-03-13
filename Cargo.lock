@@ -1636,6 +1636,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
+ "entity",
+ "migration",
  "sea-orm",
  "serde",
  "thiserror",
