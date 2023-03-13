@@ -79,6 +79,7 @@ dependencies = [
  "axum",
  "sea-orm",
  "serde",
+ "serde_json",
  "thiserror",
  "tokio",
  "uuid",
