@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "web_api",
+    "web_api/app",
     "web_api/entity",
     "web_api/migration",
 ]

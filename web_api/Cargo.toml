@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+app = { path = "./app" }
 entity = { path = "./entity" }
 migration = { path = "./migration" }
 
