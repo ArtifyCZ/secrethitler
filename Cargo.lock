@@ -1675,6 +1675,7 @@ name = "secrethitler-web-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "api",
  "app",
  "app_contract",
  "axum",
