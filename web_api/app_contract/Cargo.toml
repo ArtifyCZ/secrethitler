@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+async-trait = { version = "0.1" }
 uuid = { version = "1.3", features = [] }
