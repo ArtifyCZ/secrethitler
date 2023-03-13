@@ -3,11 +3,11 @@ use sea_orm::*;
 use ::entity::{account, auth_token};
 use app_contract::auth::*;
 
-pub struct AuthService<'a> {
+pub struct AuthServiceImpl<'a> {
     database: &'a DatabaseConnection,
 }
 
-impl<'a> AuthService<'a> {
+impl<'a> AuthServiceImpl<'a> {
     pub async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                       -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
         let CreateAnonymousAccountInputDto { username } = input;
