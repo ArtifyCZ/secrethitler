@@ -72,6 +72,17 @@ dependencies = [
 [[package]]
 name = "api"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "app",
+ "app_contract",
+ "axum",
+ "sea-orm",
+ "serde",
+ "thiserror",
+ "tokio",
+ "uuid",
+]
 
 [[package]]
 name = "app"
@@ -1663,6 +1674,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "app",
+ "app_contract",
  "axum",
  "entity",
  "migration",

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 app = { path = "./app" }
+app_contract = { path = "./app_contract" }
 entity = { path = "./entity" }
 migration = { path = "./migration" }
 
