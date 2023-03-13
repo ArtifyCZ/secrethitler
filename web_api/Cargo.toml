@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 entity = { path = "./entity" }
+migration = { path = "./migration" }
 
 anyhow = { version = "1.0", features = ["backtrace"] }
 axum ={ version = "0.6", features = ["json", "macros", "ws"] }
