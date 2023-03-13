@@ -10,15 +10,8 @@ pub struct AuthServiceImpl<'a> {
 
 #[async_trait]
 impl<'a> AuthService for AuthServiceImpl<'a> {
-    async fn create_anonymous_account(&self, _input: CreateAnonymousAccountInputDto)
+    async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                 -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
-        todo!()
-    }
-}
-
-impl<'a> AuthServiceImpl<'a> {
-    pub async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
-                      -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
         let CreateAnonymousAccountInputDto { username } = input;
 
         if account::Entity::find()
