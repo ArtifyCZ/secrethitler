@@ -1,6 +1,7 @@
 pub use sea_orm_migration::prelude::*;
 
 mod m20230313_131107_create_account_table;
+mod m20230313_152634_create_auth_token_table;
 
 pub struct Migrator;
 

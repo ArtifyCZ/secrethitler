@@ -20,6 +20,7 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Account::Username)
                             .string_len(128)
+                            .not_null()
                             .unique_key(),
                     )
                     .to_owned()
