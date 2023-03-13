@@ -5,27 +5,28 @@ use sea_orm::DatabaseConnection;
 use serde_json::{json, Value};
 use app_contract::auth::*;
 
-pub async fn create_anonymous_account<'a, AS>(Json(payload): Json<CreateAnonymousAccountInputDto>,
-                                        State(database): State<&'a DatabaseConnection>,
-        ) -> Result<Json<CreateAnonymousAccountOutputDto>, (StatusCode, Value)>
+pub async fn create_anonymous_account<AS>(Json(payload): Json<CreateAnonymousAccountInputDto>,
+                                        State(database): State<DatabaseConnection>,
+        ) -> (StatusCode, Json<Value>)
         where
-            AS: 'static + AuthService<'a> {
+            AS: 'static + AuthService {
     let auth: AS = database.into();
-    auth.create_anonymous_account(payload).await
-        .map(Json)
-        .map_err(|error| match error {
+    match auth.create_anonymous_account(payload).await {
+        Ok(out) => (StatusCode::CREATED, Json(json!(out))),
+        Err(error) => match error {
             CreateAnonymousAccountError::UsernameAlreadyInUse(username) => {
-                (StatusCode::CONFLICT, json!({
+                (StatusCode::CONFLICT, Json(json!({
                     "status": 409,
                     "message": format!("Username `{}` already in use", username),
-                }))
+                })))
             },
             error => {
                 println!("ERROR: {}", error);
-                (StatusCode::INTERNAL_SERVER_ERROR, json!({
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({
                     "status": 500,
                     "message": "Internal server error",
-                }))
+                })))
             },
-        })
+        }
+    }
 }

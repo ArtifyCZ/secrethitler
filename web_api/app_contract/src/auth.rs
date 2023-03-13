@@ -33,7 +33,7 @@ impl From<TransactionError<DbErr>> for CreateAnonymousAccountError {
 }
 
 #[async_trait]
-pub trait AuthService<'a>: From<&'a DatabaseConnection> {
+pub trait AuthService: From<DatabaseConnection> {
     async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                           -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
 }
