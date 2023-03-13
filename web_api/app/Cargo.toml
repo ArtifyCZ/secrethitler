@@ -8,3 +8,4 @@ entity = { path = "../entity" }
 
 anyhow = { version = "1.0", features = ["backtrace"] }
 sea-orm = { version = "0.11", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "with-uuid" ] }
+uuid = { version = "1.3", features = ["v4"] }
