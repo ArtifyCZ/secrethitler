@@ -18,8 +18,7 @@ async fn main() -> Result<()> {
             .acquire_timeout(Duration::from_secs(8))
             .idle_timeout(Duration::from_secs(8))
             .max_lifetime(Duration::from_secs(8))
-            .sqlx_logging(true)
-            .set_schema_search_path("my_schema".into());
+            .sqlx_logging(true);
         let db = Database::connect(opt).await?;
         migration::Migrator::up(&db, None).await?;
         db
