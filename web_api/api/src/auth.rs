@@ -5,8 +5,8 @@ use sea_orm::DatabaseConnection;
 use serde_json::{json, Value};
 use app_contract::auth::*;
 
-pub async fn create_anonymous_account<AS>(Json(payload): Json<CreateAnonymousAccountInputDto>,
-                                        State(database): State<DatabaseConnection>,
+pub async fn create_anonymous_account<AS>(State(database): State<DatabaseConnection>,
+                                          Json(payload): Json<CreateAnonymousAccountInputDto>,
         ) -> (StatusCode, Json<Value>)
         where
             AS: 'static + AuthService {
