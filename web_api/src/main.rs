@@ -4,6 +4,7 @@ use std::time::Duration;
 use anyhow::Result;
 use axum::Router;
 use sea_orm::{Database, DatabaseConnection};
+use migration::MigratorTrait;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -19,7 +20,9 @@ async fn main() -> Result<()> {
             .max_lifetime(Duration::from_secs(8))
             .sqlx_logging(true)
             .set_schema_search_path("my_schema".into());
-        Database::connect(opt).await?
+        let db = Database::connect(opt).await?;
+        migration::Migrator::up(&db, None).await?;
+        db
     };
 
     let app = Router::new()
