@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use uuid::Uuid;
 use sea_orm::*;
 use ::entity::{account, auth_token};
@@ -5,6 +6,14 @@ use app_contract::auth::*;
 
 pub struct AuthServiceImpl<'a> {
     database: &'a DatabaseConnection,
+}
+
+#[async_trait]
+impl<'a> AuthService for AuthServiceImpl<'a> {
+    async fn create_anonymous_account(&self, _input: CreateAnonymousAccountInputDto)
+                -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
+        todo!()
+    }
 }
 
 impl<'a> AuthServiceImpl<'a> {
