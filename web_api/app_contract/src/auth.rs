@@ -1,12 +1,15 @@
 use async_trait::async_trait;
 use sea_orm::{DatabaseConnection, DbErr, TransactionError};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
 
+#[derive(Clone, Debug, Deserialize)]
 pub struct CreateAnonymousAccountInputDto {
     pub username: String,
 }
 
+#[derive(Clone, Debug, Serialize)]
 pub struct CreateAnonymousAccountOutputDto {
     pub token_id: Uuid,
     pub token: Uuid,
