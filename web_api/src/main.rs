@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 use anyhow::Result;
 use axum::Router;
 
