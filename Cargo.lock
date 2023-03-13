@@ -83,6 +83,9 @@ dependencies = [
 [[package]]
 name = "app_contract"
 version = "0.1.0"
+dependencies = [
+ "uuid",
+]
 
 [[package]]
 name = "arrayvec"
