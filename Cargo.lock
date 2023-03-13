@@ -76,6 +76,7 @@ dependencies = [
  "anyhow",
  "entity",
  "sea-orm",
+ "uuid",
 ]
 
 [[package]]
