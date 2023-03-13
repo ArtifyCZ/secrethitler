@@ -74,6 +74,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "app_contract",
  "entity",
  "sea-orm",
  "uuid",
