@@ -1,2 +1,2 @@
 pub mod account;
-mod auth_token;
+pub mod auth_token;
