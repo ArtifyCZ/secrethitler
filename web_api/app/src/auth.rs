@@ -2,15 +2,7 @@ use anyhow::bail;
 use uuid::Uuid;
 use sea_orm::*;
 use ::entity::{account, auth_token};
-
-pub struct CreateAnonymousAccountInputDto {
-    pub username: String,
-}
-
-pub struct CreateAnonymousAccountOutputDto {
-    pub token_id: Uuid,
-    pub token: Uuid,
-}
+use app_contract::auth::*;
 
 pub struct AuthService<'a> {
     database: &'a DatabaseConnection,
