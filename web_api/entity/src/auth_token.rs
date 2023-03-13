@@ -1,22 +1,25 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
-#[sea_orm(table_name = "account")]
+#[sea_orm(table_name = "auth_token")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
-    pub username: String,
+    #[sea_orm()]
+    pub token: Uuid,
+    #[sea_orm()]
+    pub account_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::auth_token::Entity")]
-    AuthToken,
+    #[sea_orm(has_one = "super::account::Entity")]
+    Account,
 }
 
-impl Related<super::auth_token::Entity> for Entity {
+impl Related<super::account::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::AuthToken.def()
+        Relation::Account.def()
     }
 }
 
