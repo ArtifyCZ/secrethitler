@@ -3,6 +3,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use sea_orm::DatabaseConnection;
 use serde_json::{json, Value};
+use uuid::Uuid;
 use app_contract::auth::*;
 
 pub use authorize::{Authorize, AuthorizeError};
@@ -118,4 +119,13 @@ pub async fn create_anonymous_account<AS>(State(database): State<DatabaseConnect
             },
         }
     }
+}
+
+pub async fn check_auth<AS>(auth: Authorize<AS>) -> (StatusCode, Json<Value>)
+    where
+        AS: 'static + AuthService + Send + Sync {
+    let account_id: Uuid = auth.into();
+    (StatusCode::OK, Json(json!({
+        "account_id": account_id,
+    })))
 }
