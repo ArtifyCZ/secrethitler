@@ -52,4 +52,25 @@ impl AuthService for AuthServiceImpl {
             token,
         })
     }
+
+    async fn check_token(&self, input: CheckTokenInputDto) -> Result<CheckTokenOutputDto, CheckTokenError> {
+        let CheckTokenInputDto { token } = input;
+
+        let row = match auth_token::Entity::find()
+            .filter(auth_token::Column::Token.eq(token))
+            .limit(1)
+            .one(&self.database).await? {
+            Some(row) => row,
+            None => {
+                return Err(CheckTokenError::TokenNotFound);
+            }
+        };
+
+        let auth_token::Model { id: token_id, account_id, token: _token } = row;
+
+        Ok(CheckTokenOutputDto {
+            token_id,
+            account_id,
+        })
+    }
 }
