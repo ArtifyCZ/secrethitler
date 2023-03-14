@@ -1691,7 +1691,6 @@ dependencies = [
  "axum",
  "migration",
  "sea-orm",
- "thiserror",
  "tokio",
  "uuid",
 ]
