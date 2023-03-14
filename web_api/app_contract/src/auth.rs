@@ -32,8 +32,30 @@ impl From<TransactionError<DbErr>> for CreateAnonymousAccountError {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct CheckTokenInputDto {
+    pub token: Uuid,
+}
+
+#[derive(Clone, Debug)]
+pub struct CheckTokenOutputDto {
+    pub token_id: Uuid,
+    pub user_id: Uuid,
+}
+
+#[derive(Error, Debug)]
+pub enum CheckTokenError {
+    #[error("User with the token could not been found")]
+    TokenNotFound,
+    #[error("An database error occurred: {0}")]
+    DatabaseError(#[from] DbErr),
+}
+
 #[async_trait]
 pub trait AuthService: From<DatabaseConnection> {
     async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                           -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
+
+    async fn check_token(&self, input: CheckTokenInputDto)
+                        -> Result<CheckTokenOutputDto, CheckTokenError>;
 }
