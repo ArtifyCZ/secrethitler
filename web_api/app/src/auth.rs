@@ -4,6 +4,7 @@ use sea_orm::*;
 use ::entity::{account, auth_token};
 use app_contract::auth::*;
 
+#[derive(Clone)]
 pub struct AuthServiceImpl {
     database: DatabaseConnection,
 }

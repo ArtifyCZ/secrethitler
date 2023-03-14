@@ -6,6 +6,7 @@ use axum::Router;
 use sea_orm::{Database, DatabaseConnection};
 use migration::MigratorTrait;
 use axum::routing::*;
+use app::auth::AuthServiceImpl;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -25,10 +26,12 @@ async fn main() -> Result<()> {
         db
     };
 
+    let auth: AuthServiceImpl = db.into();
+
     let app = Router::new()
-        .route("/auth/anonymous", post(api::auth::create_anonymous_account::<app::auth::AuthServiceImpl>))
-        .route("/auth/check", get(api::auth::check_auth::<app::auth::AuthServiceImpl>))
-        .with_state(db);
+        .route("/auth/anonymous", post(api::auth::create_anonymous_account::<AuthServiceImpl>))
+        .route("/auth/check", get(api::auth::check_auth::<AuthServiceImpl>))
+        .with_state(auth);
 
     let address = match std::env::var("HOST") {
         Ok(str) => str,

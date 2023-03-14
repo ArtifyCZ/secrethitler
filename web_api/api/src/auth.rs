@@ -1,7 +1,6 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use sea_orm::DatabaseConnection;
 use serde_json::{json, Value};
 use uuid::Uuid;
 use app_contract::auth::*;
@@ -9,6 +8,7 @@ use app_contract::auth::*;
 pub use authorize::{Authorize, AuthorizeError};
 
 mod authorize {
+    use std::error::Error;
     use std::marker::PhantomData;
     use std::str::FromStr;
     use axum::extract::{FromRef, FromRequestParts, State};
@@ -16,7 +16,6 @@ mod authorize {
     use axum::http::StatusCode;
     use axum::response::{IntoResponse, Response};
     use axum_auth::AuthBearer;
-    use sea_orm::{DatabaseConnection, DbErr};
     use thiserror::Error;
     use uuid::Uuid;
     use app_contract::auth::{AuthService, CheckTokenError, CheckTokenInputDto, CheckTokenOutputDto};
@@ -33,10 +32,8 @@ mod authorize {
         TokenNotFound,
         #[error("Token not parsable")]
         TokenNotParsable,
-        #[error("An database error occurred: {0}")]
-        DatabaseError(DbErr),
-        #[error("An error occurred in Axum")]
-        AxumInternalError,
+        #[error("An internal server error occurred: {0}")]
+        InternalError(#[from] Box<dyn Error>),
     }
 
     impl IntoResponse for AuthorizeError {
@@ -57,8 +54,7 @@ mod authorize {
     impl<S, AS> FromRequestParts<S> for Authorize<AS>
             where
                 S: Sync + Send,
-                AS: 'static + AuthService + Sync + Send,
-                DatabaseConnection: FromRef<S> {
+                AS: 'static + AuthService + FromRef<S> + Send + Sync {
         type Rejection = AuthorizeError;
 
         async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
@@ -68,18 +64,17 @@ mod authorize {
             let token = Uuid::from_str(token.trim())
                 .map_err(|_| AuthorizeError::TokenNotParsable)?;
 
-            let State(database): State<DatabaseConnection> =
+            let State(auth): State<AS> =
                 FromRequestParts::from_request_parts(parts, state).await
-                .map_err(|_| AuthorizeError::AxumInternalError)?;
-
-            let auth: AS = database.into();
+                    .expect("Infallible error type has no possible value");
 
             let CheckTokenOutputDto { account_id, token_id: _ } =
                 auth.check_token(CheckTokenInputDto {
                     token,
                 }).await.map_err(|error| match error {
                     CheckTokenError::TokenNotFound => AuthorizeError::TokenNotFound,
-                    CheckTokenError::DatabaseError(error) => AuthorizeError::DatabaseError(error),
+                    CheckTokenError::DatabaseError(error) =>
+                        AuthorizeError::InternalError(Box::new(error)),
                 })?;
 
             Ok(Self(account_id, PhantomData))
@@ -88,19 +83,18 @@ mod authorize {
 
     impl<AS> From<Authorize<AS>> for Uuid
             where
-                AS: 'static + AuthService + Sync + Send {
+                AS: 'static + AuthService {
         fn from(value: Authorize<AS>) -> Self {
             value.0
         }
     }
 }
 
-pub async fn create_anonymous_account<AS>(State(database): State<DatabaseConnection>,
+pub async fn create_anonymous_account<AS>(State(auth): State<AS>,
                                           Json(payload): Json<CreateAnonymousAccountInputDto>,
         ) -> (StatusCode, Json<Value>)
         where
             AS: 'static + AuthService {
-    let auth: AS = database.into();
     match auth.create_anonymous_account(payload).await {
         Ok(out) => (StatusCode::CREATED, Json(json!(out))),
         Err(error) => match error {
