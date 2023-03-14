@@ -1,8 +1,8 @@
-use std::error::Error;
 use ::entity::{account, auth_token};
 use app_contract::auth::*;
 use async_trait::async_trait;
 use sea_orm::*;
+use std::error::Error;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -54,10 +54,8 @@ impl AuthService for AuthServiceImpl {
             account_id: Set(id),
         };
 
-        account.insert(&self.database).await
-            .map_err(to_db_err)?;
-        auth_token.insert(&self.database).await
-            .map_err(to_db_err)?;
+        account.insert(&self.database).await.map_err(to_db_err)?;
+        auth_token.insert(&self.database).await.map_err(to_db_err)?;
 
         Ok(CreateAnonymousAccountOutputDto { token_id, token })
     }
