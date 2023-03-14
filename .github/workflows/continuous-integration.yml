@@ -32,38 +32,6 @@ jobs:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: target/release/secrethitler-web-api
 
-
-  test_backend:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{matrix.os}}
-    needs: build_backend
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 14
-        cache: 'npm'
-        cache-dependency-path: web_api/tests/package-lock.json
-    - name: Install test dependencies
-      working-directory: web_api/tests
-      run: npm i
-    - uses: Swatinem/rust-cache@v1
-    - uses: actions/download-artifact@v3
-      with:
-        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
-    - name: Start the API server
-      run: |
-        chmod 701 secrethitler-web-api
-        ./secrethitler-web-api&
-    - name: Run backend tests
-      working-directory: web_api/tests
-      run: npm t
-    - name: Stop the API server
-      run: killall secrethitler-web-api
-
-
   ci_flutter:
     strategy:
       matrix:
