@@ -52,7 +52,7 @@ pub enum CheckTokenError {
 }
 
 #[async_trait]
-pub trait AuthService: From<DatabaseConnection> {
+pub trait AuthService: From<DatabaseConnection> + Clone {
     async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
                           -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
 
