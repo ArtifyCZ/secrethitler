@@ -1,6 +1,6 @@
-use std::error::Error;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 use thiserror::Error;
 use uuid::Uuid;
 

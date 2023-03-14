@@ -81,9 +81,7 @@ mod authorize {
                 .await
                 .map_err(|error| match error {
                     CheckTokenError::TokenNotFound => AuthorizeError::TokenNotFound,
-                    CheckTokenError::DatabaseError(error) => {
-                        AuthorizeError::InternalError(error)
-                    }
+                    CheckTokenError::DatabaseError(error) => AuthorizeError::InternalError(error),
                 })?;
 
             Ok(Self(account_id, PhantomData))
