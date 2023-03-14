@@ -1689,7 +1689,6 @@ dependencies = [
  "app",
  "app_contract",
  "axum",
- "entity",
  "migration",
  "sea-orm",
  "serde",

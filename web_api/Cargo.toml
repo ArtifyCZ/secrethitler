@@ -7,7 +7,6 @@ edition = "2021"
 api = { path = "./api" }
 app = { path = "./app" }
 app_contract = { path = "./app_contract" }
-entity = { path = "./entity" }
 migration = { path = "./migration" }
 
 anyhow = { version = "1.0", features = ["backtrace"] }
