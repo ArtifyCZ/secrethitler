@@ -40,7 +40,7 @@ pub struct CheckTokenInputDto {
 #[derive(Clone, Debug)]
 pub struct CheckTokenOutputDto {
     pub token_id: Uuid,
-    pub user_id: Uuid,
+    pub account_id: Uuid,
 }
 
 #[derive(Error, Debug)]
