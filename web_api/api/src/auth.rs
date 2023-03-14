@@ -82,7 +82,7 @@ mod authorize {
                 .map_err(|error| match error {
                     CheckTokenError::TokenNotFound => AuthorizeError::TokenNotFound,
                     CheckTokenError::DatabaseError(error) => {
-                        AuthorizeError::InternalError(Box::new(error))
+                        AuthorizeError::InternalError(error)
                     }
                 })?;
 
