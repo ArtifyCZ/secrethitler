@@ -44,8 +44,8 @@ impl AuthService for AuthServiceImpl {
             account_id: Set(id),
         };
 
-        account.save(&self.database).await?;
-        auth_token.save(&self.database).await?;
+        account.insert(&self.database).await?;
+        auth_token.insert(&self.database).await?;
 
         Ok(CreateAnonymousAccountOutputDto {
             token_id,
