@@ -11,7 +11,6 @@ async-trait = { version = "0.1", features = [] }
 axum ={ version = "0.6", features = ["json", "macros", "ws"] }
 axum-auth = { version = "0.4", default-features = false, features = ["auth-bearer"] }
 uuid = { version = "1.0", features = ["v4"] }
-sea-orm = { version = "0.11", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "with-uuid" ] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = [] }
 thiserror = { version = "1.0", features = [] }
