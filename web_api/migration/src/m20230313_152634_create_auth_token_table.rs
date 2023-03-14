@@ -23,36 +23,31 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .unique_key(),
                     )
-                    .col(
-                        ColumnDef::new(AuthToken::AccountId)
-                            .uuid()
-                            .not_null()
-                    )
+                    .col(ColumnDef::new(AuthToken::AccountId).uuid().not_null())
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .name(&AuthToken::AccountKey.to_string())
                             .from_tbl(AuthToken::Table)
                             .from_col(AuthToken::AccountId)
                             .to_tbl(Account::Table)
-                            .to_col(Account::Id)
+                            .to_col(Account::Id),
                     )
-                    .to_owned()
+                    .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager.drop_foreign_key(ForeignKeyDropStatement::new()
-            .name(&AuthToken::AccountKey.to_string())
-            .to_owned())
+        manager
+            .drop_foreign_key(
+                ForeignKeyDropStatement::new()
+                    .name(&AuthToken::AccountKey.to_string())
+                    .to_owned(),
+            )
             .await?;
         manager
-            .drop_table(
-                Table::drop()
-                    .table(AuthToken::Table)
-                    .if_exists()
-                    .to_owned()
-            ).await
+            .drop_table(Table::drop().table(AuthToken::Table).if_exists().to_owned())
+            .await
     }
 }
 

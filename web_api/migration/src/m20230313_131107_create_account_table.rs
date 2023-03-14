@@ -11,30 +11,22 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Account::Table)
                     .if_not_exists()
-                    .col(
-                        ColumnDef::new(Account::Id)
-                            .uuid()
-                            .not_null()
-                            .primary_key(),
-                    )
+                    .col(ColumnDef::new(Account::Id).uuid().not_null().primary_key())
                     .col(
                         ColumnDef::new(Account::Username)
                             .string_len(128)
                             .not_null()
                             .unique_key(),
                     )
-                    .to_owned()
-            ).await
+                    .to_owned(),
+            )
+            .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(
-                Table::drop()
-                    .table(Account::Table)
-                    .if_exists()
-                    .to_owned()
-            ).await
+            .drop_table(Table::drop().table(Account::Table).if_exists().to_owned())
+            .await
     }
 }
 

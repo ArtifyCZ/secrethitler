@@ -1,8 +1,8 @@
-use async_trait::async_trait;
-use uuid::Uuid;
-use sea_orm::*;
 use ::entity::{account, auth_token};
 use app_contract::auth::*;
+use async_trait::async_trait;
+use sea_orm::*;
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct AuthServiceImpl {
@@ -11,16 +11,16 @@ pub struct AuthServiceImpl {
 
 impl From<DatabaseConnection> for AuthServiceImpl {
     fn from(database: DatabaseConnection) -> Self {
-        Self {
-            database,
-        }
+        Self { database }
     }
 }
 
 #[async_trait]
 impl AuthService for AuthServiceImpl {
-    async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
-                -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
+    async fn create_anonymous_account(
+        &self,
+        input: CreateAnonymousAccountInputDto,
+    ) -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
         let CreateAnonymousAccountInputDto { username } = input;
 
         let id = Uuid::new_v4();
@@ -30,7 +30,10 @@ impl AuthService for AuthServiceImpl {
         if account::Entity::find()
             .filter(account::Column::Username.eq(&username))
             .limit(1)
-            .count(&self.database).await? > 0 {
+            .count(&self.database)
+            .await?
+            > 0
+        {
             return Err(CreateAnonymousAccountError::UsernameAlreadyInUse(username));
         }
 
@@ -48,26 +51,32 @@ impl AuthService for AuthServiceImpl {
         account.insert(&self.database).await?;
         auth_token.insert(&self.database).await?;
 
-        Ok(CreateAnonymousAccountOutputDto {
-            token_id,
-            token,
-        })
+        Ok(CreateAnonymousAccountOutputDto { token_id, token })
     }
 
-    async fn check_token(&self, input: CheckTokenInputDto) -> Result<CheckTokenOutputDto, CheckTokenError> {
+    async fn check_token(
+        &self,
+        input: CheckTokenInputDto,
+    ) -> Result<CheckTokenOutputDto, CheckTokenError> {
         let CheckTokenInputDto { token } = input;
 
         let row = match auth_token::Entity::find()
             .filter(auth_token::Column::Token.eq(token))
             .limit(1)
-            .one(&self.database).await? {
+            .one(&self.database)
+            .await?
+        {
             Some(row) => row,
             None => {
                 return Err(CheckTokenError::TokenNotFound);
             }
         };
 
-        let auth_token::Model { id: token_id, account_id, token: _token } = row;
+        let auth_token::Model {
+            id: token_id,
+            account_id,
+            token: _token,
+        } = row;
 
         Ok(CheckTokenOutputDto {
             token_id,
