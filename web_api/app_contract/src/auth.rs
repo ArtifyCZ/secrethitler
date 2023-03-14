@@ -28,7 +28,8 @@ impl From<TransactionError<DbErr>> for CreateAnonymousAccountError {
         match value {
             TransactionError::Connection(err) => err,
             TransactionError::Transaction(err) => err,
-        }.into()
+        }
+        .into()
     }
 }
 
@@ -53,9 +54,13 @@ pub enum CheckTokenError {
 
 #[async_trait]
 pub trait AuthService: From<DatabaseConnection> + Clone {
-    async fn create_anonymous_account(&self, input: CreateAnonymousAccountInputDto)
-                          -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
+    async fn create_anonymous_account(
+        &self,
+        input: CreateAnonymousAccountInputDto,
+    ) -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError>;
 
-    async fn check_token(&self, input: CheckTokenInputDto)
-                        -> Result<CheckTokenOutputDto, CheckTokenError>;
+    async fn check_token(
+        &self,
+        input: CheckTokenInputDto,
+    ) -> Result<CheckTokenOutputDto, CheckTokenError>;
 }
