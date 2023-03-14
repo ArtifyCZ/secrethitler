@@ -14,12 +14,20 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v2
+    - uses: egor-tensin/setup-clang@v1
+      with:
+        version: latest
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: ${{matrix.toolchain}}
         override: true
+        profile: minimal
+    - uses: Swatinem/rust-cache@v2
     - name: Build
-      run: cargo build --release
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --release
     - name: Upload binary
       uses: actions/upload-artifact@v3
       with:
@@ -35,11 +43,15 @@ jobs:
     needs: build_backend
     steps:
       - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-clang@v1
+        with:
+          version: latest
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{matrix.toolchain}}
           components: rustfmt, clippy
           override: true
+      - uses: Swatinem/rust-cache@v2
       - name: rustfmt
         run: cargo fmt --all -- --check
       - name: clippy
