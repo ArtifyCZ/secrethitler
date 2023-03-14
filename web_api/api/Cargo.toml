@@ -7,7 +7,6 @@ edition = "2021"
 app = { path = "../app" }
 app_contract = { path = "../app_contract" }
 
-anyhow = { version = "1.0", features = ["backtrace"] }
 async-trait = { version = "0.1", features = [] }
 axum ={ version = "0.6", features = ["json", "macros", "ws"] }
 axum-auth = { version = "0.4", default-features = false, features = ["auth-bearer"] }
