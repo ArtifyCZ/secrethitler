@@ -26,8 +26,8 @@ async fn main() -> Result<()> {
     };
 
     let app = Router::new()
-        .route("/", get(|| async { "Hello world!" }))
         .route("/auth/anonymous", post(api::auth::create_anonymous_account::<app::auth::AuthServiceImpl>))
+        .route("/auth/check", get(api::auth::check_auth::<app::auth::AuthServiceImpl>))
         .with_state(db);
 
     let address = match std::env::var("HOST") {
