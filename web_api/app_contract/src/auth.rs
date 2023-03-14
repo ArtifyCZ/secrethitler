@@ -1,5 +1,5 @@
+use std::error::Error;
 use async_trait::async_trait;
-use sea_orm::{DatabaseConnection, DbErr, TransactionError};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
@@ -20,17 +20,7 @@ pub enum CreateAnonymousAccountError {
     #[error("Username `{0}` is already in use")]
     UsernameAlreadyInUse(String),
     #[error("An database error occurred: {0}")]
-    DatabaseError(#[from] DbErr),
-}
-
-impl From<TransactionError<DbErr>> for CreateAnonymousAccountError {
-    fn from(value: TransactionError<DbErr>) -> Self {
-        match value {
-            TransactionError::Connection(err) => err,
-            TransactionError::Transaction(err) => err,
-        }
-        .into()
-    }
+    DatabaseError(Box<dyn Error>),
 }
 
 #[derive(Clone, Debug)]
@@ -49,11 +39,11 @@ pub enum CheckTokenError {
     #[error("User with the token could not been found")]
     TokenNotFound,
     #[error("An database error occurred: {0}")]
-    DatabaseError(#[from] DbErr),
+    DatabaseError(Box<dyn Error>),
 }
 
 #[async_trait]
-pub trait AuthService: From<DatabaseConnection> + Clone {
+pub trait AuthService: Clone {
     async fn create_anonymous_account(
         &self,
         input: CreateAnonymousAccountInputDto,

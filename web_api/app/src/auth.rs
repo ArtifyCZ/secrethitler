@@ -1,3 +1,4 @@
+use std::error::Error;
 use ::entity::{account, auth_token};
 use app_contract::auth::*;
 use async_trait::async_trait;
@@ -21,6 +22,10 @@ impl AuthService for AuthServiceImpl {
         &self,
         input: CreateAnonymousAccountInputDto,
     ) -> Result<CreateAnonymousAccountOutputDto, CreateAnonymousAccountError> {
+        fn to_db_err<T: 'static + Error>(err: T) -> CreateAnonymousAccountError {
+            CreateAnonymousAccountError::DatabaseError(Box::new(err))
+        }
+
         let CreateAnonymousAccountInputDto { username } = input;
 
         let id = Uuid::new_v4();
@@ -31,7 +36,8 @@ impl AuthService for AuthServiceImpl {
             .filter(account::Column::Username.eq(&username))
             .limit(1)
             .count(&self.database)
-            .await?
+            .await
+            .map_err(to_db_err)?
             > 0
         {
             return Err(CreateAnonymousAccountError::UsernameAlreadyInUse(username));
@@ -48,8 +54,10 @@ impl AuthService for AuthServiceImpl {
             account_id: Set(id),
         };
 
-        account.insert(&self.database).await?;
-        auth_token.insert(&self.database).await?;
+        account.insert(&self.database).await
+            .map_err(to_db_err)?;
+        auth_token.insert(&self.database).await
+            .map_err(to_db_err)?;
 
         Ok(CreateAnonymousAccountOutputDto { token_id, token })
     }
@@ -58,13 +66,18 @@ impl AuthService for AuthServiceImpl {
         &self,
         input: CheckTokenInputDto,
     ) -> Result<CheckTokenOutputDto, CheckTokenError> {
+        fn to_db_err<T: 'static + Error>(err: T) -> CheckTokenError {
+            CheckTokenError::DatabaseError(Box::new(err))
+        }
+
         let CheckTokenInputDto { token } = input;
 
         let row = match auth_token::Entity::find()
             .filter(auth_token::Column::Token.eq(token))
             .limit(1)
             .one(&self.database)
-            .await?
+            .await
+            .map_err(to_db_err)?
         {
             Some(row) => row,
             None => {
