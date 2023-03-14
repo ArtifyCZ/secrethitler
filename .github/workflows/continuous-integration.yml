@@ -10,27 +10,39 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        toolchain: [stable]
     runs-on: ${{matrix.os}}
-    defaults:
-      run:
-        working-directory: web_api
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
-        default: true
-        profile: minimal
-    - uses: Swatinem/rust-cache@v1
-    - name: Build the backend
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release --package secrethitler-web-api
-    - uses: actions/upload-artifact@v3
+        toolchain: ${{matrix.toolchain}}
+        override: true
+    - name: Build
+      run: cargo build --release
+    - name: Upload binary
+      uses: actions/upload-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: target/release/secrethitler-web-api
+
+  lint_backend:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        toolchain: [ stable ]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          components: rustfmt, clippy
+          override: true
+      - name: rustfmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy -- -D warnings
 
   ci_flutter:
     strategy:
