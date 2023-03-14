@@ -76,6 +76,7 @@ dependencies = [
  "anyhow",
  "app",
  "app_contract",
+ "async-trait",
  "axum",
  "sea-orm",
  "serde",
