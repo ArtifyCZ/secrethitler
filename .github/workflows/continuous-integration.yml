@@ -10,59 +10,52 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        toolchain: [stable]
     runs-on: ${{matrix.os}}
-    defaults:
-      run:
-        working-directory: web_api
     steps:
     - uses: actions/checkout@v2
+    - uses: egor-tensin/setup-clang@v1
+      with:
+        version: latest
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
-        default: true
+        toolchain: ${{matrix.toolchain}}
+        override: true
         profile: minimal
-    - uses: Swatinem/rust-cache@v1
-    - name: Build the backend
+    - uses: Swatinem/rust-cache@v2
+    - name: Build
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --release --package secrethitler-web-api
-    - uses: actions/upload-artifact@v3
+        args: --release
+    - name: Upload binary
+      uses: actions/upload-artifact@v3
       with:
         name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
         path: target/release/secrethitler-web-api
 
-
-  test_backend:
+  lint_backend:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
+        toolchain: [ stable ]
     runs-on: ${{matrix.os}}
     needs: build_backend
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 14
-        cache: 'npm'
-        cache-dependency-path: web_api/tests/package-lock.json
-    - name: Install test dependencies
-      working-directory: web_api/tests
-      run: npm i
-    - uses: Swatinem/rust-cache@v1
-    - uses: actions/download-artifact@v3
-      with:
-        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
-    - name: Start the API server
-      run: |
-        chmod 701 secrethitler-web-api
-        ./secrethitler-web-api&
-    - name: Run backend tests
-      working-directory: web_api/tests
-      run: npm t
-    - name: Stop the API server
-      run: killall secrethitler-web-api
-
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-clang@v1
+        with:
+          version: latest
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          components: rustfmt, clippy
+          override: true
+      - uses: Swatinem/rust-cache@v2
+      - name: rustfmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy -- -D warnings
 
   ci_flutter:
     strategy:

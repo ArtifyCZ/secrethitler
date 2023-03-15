@@ -1,0 +1,12 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+app_contract = { path = "../app_contract" }
+entity = { path = "../entity" }
+
+async-trait = { version = "0.1", features = [] }
+sea-orm = { version = "0.11", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "with-uuid" ] }
+uuid = { version = "1.3", features = ["v4"] }
