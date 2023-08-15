@@ -31,7 +31,7 @@ jobs:
     - name: Upload binary
       uses: actions/upload-artifact@v3
       with:
-        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/*/Cargo.toml', 'web_api/*/src/**')}}
         path: target/release/secrethitler-web-api
 
   lint_backend:
@@ -81,7 +81,7 @@ jobs:
       run: flutter pub get
     - uses: actions/download-artifact@v3
       with:
-        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/Cargo.toml', 'web_api/src/**')}}
+        name: backend_build_${{runner.os}}_${{hashFiles('Cargo.toml', 'Cargo.lock', 'web_api/*/Cargo.toml', 'web_api/*/src/**')}}
     - name: Start the API server
       run: |
         chmod 701 secrethitler-web-api
