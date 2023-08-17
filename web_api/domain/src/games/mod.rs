@@ -1,3 +1,5 @@
+#[cfg(feature = "dto")]
+pub mod dto;
 mod game;
 mod game_repository;
 mod player;

@@ -1,0 +1,13 @@
+[package]
+name = "secrethitler-application"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { version = "1.0.74" }
+secrethitler-domain = { path = "../domain" }
+uuid = { version = "1.4.1", features = ["v4"] }
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
+secrethitler-dal-temp = { path = "../dal/temp" }

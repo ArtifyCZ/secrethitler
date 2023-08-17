@@ -1,12 +1,9 @@
 [package]
-name = "secrethitler-domain"
+name = "secrethitler-dal-temp"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-default = []
-dto = []
-
 [dependencies]
 anyhow = { version = "1.0.74" }
+secrethitler-domain = { path = "../../domain", features = ["dto"] }
 uuid = { version = "1.4.1", features = ["v4"] }

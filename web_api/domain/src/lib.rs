@@ -1,3 +1,3 @@
 pub mod games;
 
-pub type Result<T> = anyhow::Result<T>;
+pub type Result<T, E = anyhow::Error> = anyhow::Result<T, E>;

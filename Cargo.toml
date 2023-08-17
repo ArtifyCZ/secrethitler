@@ -1,4 +1,7 @@
 [workspace]
 members = [
+    "web_api/application",
+    "web_api/dal/temp",
     "web_api/domain",
+    "web_api/http_api",
 ]
